@@ -50,10 +50,10 @@ namespace Graph.Items
 		public int? Width { get; set; }
 		public int? Height { get; set; }
 		public Image Image { get; set; }
-		
 
 
-		internal override SizeF Measure(Graphics graphics)
+
+        public override SizeF Measure(Graphics graphics)
 		{
 			if (this.Image != null)
 			{
@@ -83,7 +83,7 @@ namespace Graph.Items
 			}
 		}
 
-		internal override void Render(Graphics graphics, SizeF minimumSize, PointF location)
+        public override void Render(Graphics graphics, SizeF minimumSize, PointF location)
 		{
 			var size = Measure(graphics);
 			size.Width  = Math.Max(minimumSize.Width, size.Width);

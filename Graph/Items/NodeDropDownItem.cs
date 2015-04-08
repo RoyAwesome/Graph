@@ -103,7 +103,7 @@ namespace Graph.Items
 			return true;
 		}
 
-		internal override SizeF Measure(Graphics graphics)
+        public override SizeF Measure(Graphics graphics)
 		{
 			var text = string.Empty;
 			if (Items != null &&
@@ -127,7 +127,7 @@ namespace Graph.Items
 			}
 		}
 
-		internal override void Render(Graphics graphics, SizeF minimumSize, PointF location)
+        public override void Render(Graphics graphics, SizeF minimumSize, PointF location)
 		{
 			var text = string.Empty;
 			if (Items != null &&
