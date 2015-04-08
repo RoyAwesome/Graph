@@ -733,8 +733,7 @@ namespace Graph
 		#region FindNodeItemAt
 		static NodeItem FindNodeItemAt(Node node, PointF location)
 		{
-			if (node.itemsBounds == null ||
-				location.X < node.itemsBounds.Left ||
+			if (location.X < node.itemsBounds.Left ||
 				location.X > node.itemsBounds.Right)
 				return null;
 
@@ -756,7 +755,7 @@ namespace Graph
 		#region FindInputConnectorAt
 		static NodeConnector FindInputConnectorAt(Node node, PointF location)
 		{
-			if (node.itemsBounds == null || node.Collapsed)
+			if (node.Collapsed)
 				return null;
 
 			foreach (var inputConnector in node.inputConnectors)
@@ -774,7 +773,7 @@ namespace Graph
 		#region FindOutputConnectorAt
 		static NodeConnector FindOutputConnectorAt(Node node, PointF location)
 		{
-			if (node.itemsBounds == null || node.Collapsed)
+			if (node.Collapsed)
 				return null;
 
 			foreach (var outputConnector in node.outputConnectors)

@@ -31,8 +31,7 @@ using System.Drawing.Drawing2D;
 namespace Graph.Items
 {
 	public class NodeSliderItem : NodeItem
-	{
-		public event EventHandler<NodeItemEventArgs> Clicked;
+	{		
 		public event EventHandler<NodeItemEventArgs> ValueChanged;
 
 		public NodeSliderItem(string text, float sliderSize, float textSize, float minValue, float maxValue, float defaultValue, bool inputEnabled, bool outputEnabled) :
@@ -87,15 +86,7 @@ namespace Graph.Items
 					ValueChanged(this, new NodeItemEventArgs(this));
 			}
 		}
-
-
-		public override bool OnClick()
-		{
-			base.OnClick();
-			if (Clicked != null)
-				Clicked(this, new NodeItemEventArgs(this));
-			return true;
-		}
+                
 
 		public override bool OnStartDrag(PointF location, out PointF original_location) 
 		{

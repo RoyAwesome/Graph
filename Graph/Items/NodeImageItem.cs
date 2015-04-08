@@ -31,7 +31,7 @@ namespace Graph.Items
 {
 	public sealed class NodeImageItem : NodeItem
 	{
-		public event EventHandler<NodeItemEventArgs> Clicked;
+		
 
 		public NodeImageItem(Image image, bool inputEnabled = false, bool outputEnabled = false) :
 			base(inputEnabled, outputEnabled)
@@ -51,13 +51,6 @@ namespace Graph.Items
 		public int? Height { get; set; }
 		public Image Image { get; set; }
 		
-		public override bool OnClick()
-		{
-			base.OnClick();
-			if (Clicked != null)
-				Clicked(this, new NodeItemEventArgs(this));
-			return true;
-		}
 
 
 		internal override SizeF Measure(Graphics graphics)

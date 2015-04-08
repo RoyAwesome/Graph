@@ -32,8 +32,7 @@ namespace Graph.Items
 {
 	public sealed class NodeColorItem : NodeItem
 	{
-		public event EventHandler<NodeItemEventArgs> Clicked;
-
+	
 		public NodeColorItem(string text, Color color, bool inputEnabled, bool outputEnabled) :
 			base(inputEnabled, outputEnabled)
 		{
@@ -59,14 +58,7 @@ namespace Graph.Items
 		#endregion
 
 		internal SizeF TextSize;
-
-		public override bool OnClick()
-		{
-			base.OnClick();
-			if (Clicked != null)
-				Clicked(this, new NodeItemEventArgs(this));
-			return true;
-		}
+        
 
 		
 		const int ColorBoxSize = 16;
