@@ -628,7 +628,7 @@ namespace Graph
 		#region Connect
 		public NodeConnection Connect(NodeItem from, NodeItem to)
 		{
-			return Connect(from.Output, to.Input);
+			return Connect(from.Connector, to.Connector);
 		}
 
 		public NodeConnection Connect(NodeConnector from, NodeConnector to)
@@ -738,14 +738,7 @@ namespace Graph
 
 			foreach (var item in node.Items)
 			{
-				if (item.ItemBounds.IsEmpty)
-					continue;
-
-				if (location.Y < item.ItemBounds.Top)
-					break;
-
-				if (location.Y < item.ItemBounds.Bottom)
-					return item;
+                if (item.ItemBounds.Contains(location)) return item;			
 			}
 			return null;
 		}

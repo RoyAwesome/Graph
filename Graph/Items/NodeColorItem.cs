@@ -30,124 +30,124 @@ using System.Drawing.Drawing2D;
 
 namespace Graph.Items
 {
-	public sealed class NodeColorItem : NodeItem
-	{
-	
-		public NodeColorItem(string text, Color color, NodeItemType type) :
-			base(type)
-		{
-			this.Text = text;
-			this.Color = color;
-		}
+    public sealed class NodeColorItem : NodeItem
+    {
 
-		public Color Color { get; set; }
+        public NodeColorItem(string text, Color color, NodeItemType type) :
+            base(type)
+        {
+            this.Text = text;
+            this.Color = color;
+        }
 
-		#region Text
-		string internalText = string.Empty;
-		public string Text
-		{
-			get { return internalText; }
-			set
-			{
-				if (internalText == value)
-					return;
-				internalText = value;
-				TextSize = Size.Empty;
-			}
-		}
-		#endregion
+        public Color Color { get; set; }
 
-		internal SizeF TextSize;
-        
+        #region Text
+        string internalText = string.Empty;
+        public string Text
+        {
+            get { return internalText; }
+            set
+            {
+                if (internalText == value)
+                    return;
+                internalText = value;
+                TextSize = Size.Empty;
+            }
+        }
+        #endregion
 
-		
-		const int ColorBoxSize = 16;
-		const int Spacing = 2;
+        internal SizeF TextSize;
+
+
+
+        const int ColorBoxSize = 16;
+        const int Spacing = 2;
 
         public override SizeF MeasureContent(Graphics graphics)
-		{
-			if (!string.IsNullOrWhiteSpace(this.Text))
-			{
-				if (this.TextSize.IsEmpty)
-				{
-					var size = new Size(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
+        {
+            if (!string.IsNullOrWhiteSpace(this.Text))
+            {
+                if (this.TextSize.IsEmpty)
+                {
+                    var size = new Size(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
 
-					if (this.Input.Enabled != this.Output.Enabled)
-					{
-						if (this.Input.Enabled)
-							this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
-						else
-							this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.RightMeasureTextStringFormat);
-					} else
-						this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.CenterMeasureTextStringFormat);
 
-					this.TextSize.Width  = Math.Max(size.Width, this.TextSize.Width + ColorBoxSize + Spacing);
-					this.TextSize.Height = Math.Max(size.Height, this.TextSize.Height);
-				}
-				return this.TextSize;
-			} else
-			{
-				return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.HeaderHeight + GraphConstants.TopHeight);
-			}
-		}
+                    if (ItemType == NodeItemType.Input)
+                        this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
+                    else if (ItemType == NodeItemType.Output)
+                        this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.RightMeasureTextStringFormat);
+                    else
+                        this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.CenterMeasureTextStringFormat);
+
+                    this.TextSize.Width = Math.Max(size.Width, this.TextSize.Width + ColorBoxSize + Spacing);
+                    this.TextSize.Height = Math.Max(size.Height, this.TextSize.Height);
+                }
+                return this.TextSize;
+            }
+            else
+            {
+                return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.HeaderHeight + GraphConstants.TopHeight);
+            }
+        }
 
         public override void RenderContent(Graphics graphics)
         {
-			
 
-			var alignment	= HorizontalAlignment.Center;
-			var format		= GraphConstants.CenterTextStringFormat;
-			if (this.Input.Enabled != this.Output.Enabled)
-			{
-				if (this.Input.Enabled)
-				{
-					alignment	= HorizontalAlignment.Left;
-					format		= GraphConstants.LeftTextStringFormat;
-				} else
-				{
-					alignment	= HorizontalAlignment.Right;
-					format		= GraphConstants.RightTextStringFormat;
-				}
-			}
 
-			var rect		= ContentBounds;
-			var colorBox	= ContentBounds;
-			colorBox.Width	= ColorBoxSize;
-			switch (alignment)
-			{
-				case HorizontalAlignment.Left:
-					rect.Width	-= ColorBoxSize + Spacing;
-					rect.X		+= ColorBoxSize + Spacing;
-					break;
-				case HorizontalAlignment.Right:
-					colorBox.X	= rect.Right - colorBox.Width;
-					rect.Width	-= ColorBoxSize + Spacing;
-					break;
-				case HorizontalAlignment.Center:
-					rect.Width	-= ColorBoxSize + Spacing;
-					rect.X		+= ColorBoxSize + Spacing;
-					break;
-			}
+            var alignment = HorizontalAlignment.Center;
+            var format = GraphConstants.CenterTextStringFormat;
+           
+                if (ItemType == NodeItemType.Input)
+                {
+                    alignment = HorizontalAlignment.Left;
+                    format = GraphConstants.LeftTextStringFormat;
+                }
+                else
+                {
+                    alignment = HorizontalAlignment.Right;
+                    format = GraphConstants.RightTextStringFormat;
+                }
+            
 
-			graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, rect, format);
+            var rect = ContentBounds;
+            var colorBox = ContentBounds;
+            colorBox.Width = ColorBoxSize;
+            switch (alignment)
+            {
+                case HorizontalAlignment.Left:
+                    rect.Width -= ColorBoxSize + Spacing;
+                    rect.X += ColorBoxSize + Spacing;
+                    break;
+                case HorizontalAlignment.Right:
+                    colorBox.X = rect.Right - colorBox.Width;
+                    rect.Width -= ColorBoxSize + Spacing;
+                    break;
+                case HorizontalAlignment.Center:
+                    rect.Width -= ColorBoxSize + Spacing;
+                    rect.X += ColorBoxSize + Spacing;
+                    break;
+            }
 
-			using (var path = GraphRenderer.CreateRoundedRectangle(colorBox.Size, colorBox.Location))
-			{
-				using (var brush = new SolidBrush(this.Color))
-				{
-					graphics.FillPath(brush, path);
-				}
-				if ((state & RenderState.Hover) != 0)
-					graphics.DrawPath(Pens.White, path);
-				else
-					graphics.DrawPath(Pens.Black, path);
-			}
-			//using (var brush = new SolidBrush(this.Color))
-			//{
-			//	graphics.FillRectangle(brush, colorBox.X, colorBox.Y, colorBox.Width, colorBox.Height);
-			//}
-			//graphics.DrawRectangle(Pens.Black, colorBox.X, colorBox.Y, colorBox.Width, colorBox.Height);
-		}
-               
+            graphics.DrawString(this.Text, SystemFonts.MenuFont, Node.TextColor, rect, format);
+
+            using (var path = GraphRenderer.CreateRoundedRectangle(colorBox.Size, colorBox.Location))
+            {
+                using (var brush = new SolidBrush(this.Color))
+                {
+                    graphics.FillPath(brush, path);
+                }
+                if ((state & RenderState.Hover) != 0)
+                    graphics.DrawPath(Pens.White, path);
+                else
+                    graphics.DrawPath(Pens.Black, path);
+            }
+            //using (var brush = new SolidBrush(this.Color))
+            //{
+            //	graphics.FillRectangle(brush, colorBox.X, colorBox.Y, colorBox.Width, colorBox.Height);
+            //}
+            //graphics.DrawRectangle(Pens.Black, colorBox.X, colorBox.Y, colorBox.Width, colorBox.Height);
+        }
+
     }
 }

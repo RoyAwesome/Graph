@@ -67,11 +67,11 @@ namespace Graph.Items
                 {
                     var size = new Size(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
 
-                    if (this.Input != null)
+                    if (ItemType == NodeItemType.Input)
                     {
                         this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
                     }
-                    else if (this.Output != null)
+                    else if (ItemType == NodeItemType.Output)
                     {
                         this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.RightMeasureTextStringFormat);
                     }
@@ -96,17 +96,17 @@ namespace Graph.Items
         public override void RenderContent(Graphics graphics)
         {            
 
-            if (this.Input != null) 
+            if (ItemType == NodeItemType.Input) 
             {
-                graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, ContentBounds, GraphConstants.LeftTextStringFormat);
+                graphics.DrawString(this.Text, SystemFonts.MenuFont, Node.TextColor, ContentBounds, GraphConstants.LeftTextStringFormat);
             }
-            else if (this.Output != null)
+            else if (ItemType == NodeItemType.Output)
             {
-                graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, ContentBounds, GraphConstants.RightTextStringFormat);
+                graphics.DrawString(this.Text, SystemFonts.MenuFont, Node.TextColor, ContentBounds, GraphConstants.RightTextStringFormat);
             }
             else
             {
-                graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, ContentBounds, GraphConstants.CenterTextStringFormat);
+                graphics.DrawString(this.Text, SystemFonts.MenuFont, Node.TextColor, ContentBounds, GraphConstants.CenterTextStringFormat);
             }
 
         }

@@ -45,12 +45,8 @@ namespace Graph
     {
         public NodeItemType ItemType
         {
-            get
-            {
-                if (Input == null && Output == null) return NodeItemType.Label;
-                if (Input != null) return NodeItemType.Input;
-                return NodeItemType.Output;
-            }
+            get;
+            private set;
         }
 
         public NodeItem()
@@ -60,15 +56,16 @@ namespace Graph
 
         public NodeItem(NodeItemType Type)
         {
-            if (Type == NodeItemType.Input) this.Input = new NodeInputConnector(this, true);
-            if (Type == NodeItemType.Output) this.Output = new NodeOutputConnector(this, true);
+            ItemType = Type;
+            if (Type == NodeItemType.Input) this.Connector = new NodeInputConnector(this, true);
+            if (Type == NodeItemType.Output) this.Connector = new NodeOutputConnector(this, true);
         }
 
         public Node Node { get; internal set; }
         public object Tag { get; set; }
 
-        public NodeConnector Input { get; private set; }
-        public NodeConnector Output { get; private set; }
+        public NodeConnector Connector { get; private set; }
+        
                
         public RectangleF ContentBounds
         {

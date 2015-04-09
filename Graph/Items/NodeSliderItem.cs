@@ -163,7 +163,7 @@ namespace Graph.Items
 			sliderBox.Width = SliderBoxSize;
 			sliderBox.X = sliderRect.X + (this.Value * this.sliderRect.Width) / valueSize;
 
-			graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, textRect, GraphConstants.LeftTextStringFormat);
+			graphics.DrawString(this.Text, SystemFonts.MenuFont, Node.TextColor, textRect, GraphConstants.LeftTextStringFormat);
 
 			using (var path = GraphRenderer.CreateRoundedRectangle(sliderRect.Size, sliderRect.Location))
 			{

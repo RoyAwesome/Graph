@@ -131,11 +131,11 @@ namespace Graph.Items
 			if ((state & RenderState.Hover) == RenderState.Hover)
 			{
 				graphics.DrawPath(Pens.White, path);
-				graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, ContentBounds.Size), GraphConstants.LeftTextStringFormat);
+				graphics.DrawString(this.Text, SystemFonts.MenuFont, Node.TextColor, new RectangleF(location, ContentBounds.Size), GraphConstants.LeftTextStringFormat);
 			} else
 			{
 				graphics.DrawPath(Pens.Black, path);
-				graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, ContentBounds.Size), GraphConstants.LeftTextStringFormat);
+				graphics.DrawString(this.Text, SystemFonts.MenuFont, Node.TextColor, new RectangleF(location, ContentBounds.Size), GraphConstants.LeftTextStringFormat);
 			}
 		}        
     }

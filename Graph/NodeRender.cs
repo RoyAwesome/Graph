@@ -11,6 +11,19 @@ namespace Graph
     {
         protected static Pen BorderPen = new Pen(Color.FromArgb(64, 64, 64));
 
+        protected Brush HeaderColor = new SolidBrush(Color.FromArgb((int)(255 * .5), Color.PaleVioletRed));
+        protected Brush BackgroundColor = new SolidBrush(Color.FromArgb((int)(240), Color.Black));
+
+        protected Brush HeaderTextColor = Brushes.White;
+
+
+        protected Pen SelectedBorder = new Pen(Color.White, 5);
+        protected Pen HoverBorder = new Pen(Color.White, 2);
+        protected Pen IdleBorder = new Pen(Color.Black, 2);
+
+        public Brush TextColor = Brushes.White;
+
+
     
         virtual protected void DrawBackground(Graphics graphics)
         {
@@ -32,26 +45,57 @@ namespace Graph
                 path.AddArc(left, bottom - cornerSize, cornerSize, cornerSize, 90, 90);
                 path.CloseFigure();
 
-                if ((state & (RenderState.Dragging | RenderState.Focus)) != 0)
+                graphics.FillPath(BackgroundColor, path);
+
+                DrawHeader(graphics);
+
+                if ((state & (RenderState.Dragging)) != 0)
                 {
-                    graphics.FillPath(Brushes.DarkOrange, path);
+                    graphics.DrawPath(SelectedBorder, path);
                 }
                 else
                 if ((state & RenderState.Hover) != 0)
                 {
-                    graphics.FillPath(Brushes.LightSteelBlue, path);
+                    graphics.DrawPath(HoverBorder, path);
                 }
                 else
                 {
-                    graphics.FillPath(Brushes.LightGray, path);
+                    graphics.DrawPath(IdleBorder, path);
                 }
-                graphics.DrawPath(BorderPen, path);
+               
             }
 
         }
 
         virtual protected void DrawHeader(Graphics graphics)
         {
+            using (var path = new GraphicsPath(FillMode.Winding))
+            {
+                int cornerSize = (int)GraphConstants.CornerSize * 2;
+                int halfConnectorSize = (int)Math.Ceiling(GraphConstants.ConnectorSize / 2.0f);
+
+                var position = HeaderBounds.Location;
+                var left = position.X + halfConnectorSize;
+                var top = position.Y - GraphConstants.TopHeight;
+                var right = position.X + HeaderBounds.Size.Width - halfConnectorSize;
+                var bottom = position.Y + HeaderBounds.Size.Height;
+
+                path.AddArc(left, top, cornerSize, cornerSize, 180, 90);
+                path.AddArc(right - cornerSize, top, cornerSize, cornerSize, 270, 90);
+                path.AddLine(right, top, right, bottom);
+                path.AddLine(right, bottom, left, bottom);
+                path.AddLine(left, bottom, left, top);
+                
+
+                path.CloseFigure();
+
+                graphics.FillPath(HeaderColor, path);
+
+
+
+            }
+
+            //graphics.FillRectangle(Brushes.Red, HeaderBounds);
             graphics.DrawString(Title, SystemFonts.CaptionFont, Brushes.White, HeaderBounds, GraphConstants.TitleStringFormat);
         }
               
@@ -60,8 +104,7 @@ namespace Graph
         {
             DrawBackground(graphics);
 
-            DrawHeader(graphics);
-                    
+                     
             foreach (var item in Items)
             {
                 item.Render(graphics);

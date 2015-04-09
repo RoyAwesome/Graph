@@ -120,7 +120,7 @@ namespace Graph.Items
 						graphics.FillPath(brush, path);
 					}
 				}
-				graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, rect, GraphConstants.CenterTextStringFormat);
+				graphics.DrawString(this.Text, SystemFonts.MenuFont, Node.TextColor, rect, GraphConstants.CenterTextStringFormat);
 
 				if ((state & RenderState.Hover) != 0)
 					graphics.DrawPath(Pens.White, path);

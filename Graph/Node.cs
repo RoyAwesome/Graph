@@ -108,14 +108,14 @@ namespace Graph
         {
             get
             {
-                return InputItems.Select(x => x.Input);
+                return InputItems.Select(x => x.Connector);
             }
         }
         public IEnumerable<NodeConnector> OutputConnectors
         {
             get
             {
-                return OutputItems.Select(x => x.Output);
+                return OutputItems.Select(x => x.Connector);
             }
         }
         internal List<NodeConnection> AllConnections
@@ -190,9 +190,9 @@ namespace Graph
             {
                 foreach (var item in Items)
                 {
-                    if (item.ItemType == NodeItemType.Input && item.Input.Enabled && !item.Input.HasConnection)
+                    if (item.ItemType == NodeItemType.Input && item.Connector.Enabled && !item.Connector.HasConnection)
                         return true;
-                    if (item.ItemType == NodeItemType.Output && item.Output.Enabled && !item.Output.HasConnection)
+                    if (item.ItemType == NodeItemType.Output && item.Connector.Enabled && !item.Connector.HasConnection)
                         return true;
                 }
                 return false;
@@ -205,7 +205,7 @@ namespace Graph
             get
             {
                 foreach (var item in OutputItems)
-                    if (item.Output.Enabled && !item.Output.HasConnection)
+                    if (item.Connector.Enabled && !item.Connector.HasConnection)
                         return true;
                 return false;
             }
@@ -217,7 +217,7 @@ namespace Graph
             get
             {
                 foreach (var item in InputItems)
-                    if (item.Input.Enabled && !item.Input.HasConnection)
+                    if (item.Connector.Enabled && !item.Connector.HasConnection)
                         return true;
                 return false;
             }
