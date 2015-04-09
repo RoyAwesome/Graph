@@ -49,13 +49,13 @@ namespace Graph.Items
 		internal void ForceResize() { TextSize = Size.Empty; }
 		internal SizeF				TextSize;
 
-        public override SizeF Measure(Graphics graphics)
+        public override SizeF MeasureContent(Graphics graphics)
 		{
 			if (!string.IsNullOrWhiteSpace(this.Title))
 			{
 				if (this.TextSize.IsEmpty)
 				{
-					var size = new Size(GraphConstants.MinimumItemWidth, GraphConstants.TitleHeight);
+					var size = new Size(GraphConstants.MinimumItemWidth, GraphConstants.HeaderHeight);
 					this.TextSize			= graphics.MeasureString(this.Title, SystemFonts.CaptionFont, size, GraphConstants.TitleMeasureStringFormat);
 
 					this.TextSize.Width		= Math.Max(size.Width,  this.TextSize.Width + (GraphConstants.CornerSize * 2));
@@ -64,17 +64,17 @@ namespace Graph.Items
 				return this.TextSize;
 			} else
 			{
-				return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.TitleHeight + GraphConstants.TopHeight);
+				return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.HeaderHeight + GraphConstants.TopHeight);
 			}
 		}
 
-        public override void Render(Graphics graphics, SizeF minimumSize, PointF location)
-		{
-			var size = Measure(graphics);
-			size.Width  = Math.Max(minimumSize.Width, size.Width);
-			size.Height = Math.Max(minimumSize.Height, size.Height);
+        public override void RenderContent(Graphics graphics)
+        {
+			var size = ContentBounds.Size;	
 
 			size.Height -= GraphConstants.TopHeight;
+
+            var location = ContentBounds.Location;
 			location.Y += GraphConstants.TopHeight;
 
 			if ((state & RenderState.Hover) == RenderState.Hover)
@@ -83,9 +83,6 @@ namespace Graph.Items
 				graphics.DrawString(this.Title, SystemFonts.CaptionFont, Brushes.Black, new RectangleF(location, size), GraphConstants.TitleStringFormat);
 		}
 
-        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
-        {
-            
-        }
+       
     }
 }

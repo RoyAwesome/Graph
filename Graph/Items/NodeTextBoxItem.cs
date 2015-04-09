@@ -99,7 +99,7 @@ namespace Graph.Items
 			return true;
 		}
 
-        public override SizeF Measure(Graphics graphics)
+        public override SizeF MeasureContent(Graphics graphics)
 		{
 			if (!string.IsNullOrWhiteSpace(this.Text))
 			{
@@ -119,13 +119,11 @@ namespace Graph.Items
 			}
 		}
 
-        public override void Render(Graphics graphics, SizeF minimumSize, PointF location)
-		{
-			var size = Measure(graphics);
-			size.Width  = Math.Max(minimumSize.Width, size.Width);
-			size.Height = Math.Max(minimumSize.Height, size.Height);
-
-			var path = GraphRenderer.CreateRoundedRectangle(size, location);
+        public override void RenderContent(Graphics graphics)
+        {
+			
+			var path = GraphRenderer.CreateRoundedRectangle(ContentBounds.Size, ContentBounds.Location);
+            var location = ContentBounds.Location;
 
 			location.Y += 1;
 			location.X += 1;
@@ -133,17 +131,12 @@ namespace Graph.Items
 			if ((state & RenderState.Hover) == RenderState.Hover)
 			{
 				graphics.DrawPath(Pens.White, path);
-				graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.LeftTextStringFormat);
+				graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, ContentBounds.Size), GraphConstants.LeftTextStringFormat);
 			} else
 			{
 				graphics.DrawPath(Pens.Black, path);
-				graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.LeftTextStringFormat);
+				graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, ContentBounds.Size), GraphConstants.LeftTextStringFormat);
 			}
-		}
-
-        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
-        {
-           
-        }
+		}        
     }
 }

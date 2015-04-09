@@ -31,78 +31,91 @@ using System.Drawing.Drawing2D;
 
 namespace Graph
 {
-	public sealed class NodeEventArgs : EventArgs
-	{
-		public NodeEventArgs(Node node) { Node = node; }
-		public Node Node { get; private set; }
-	}
+    public sealed class NodeEventArgs : EventArgs
+    {
+        public NodeEventArgs(Node node) { Node = node; }
+        public Node Node { get; private set; }
+    }
 
-	public sealed class ElementEventArgs : EventArgs
-	{
-		public ElementEventArgs(IElement element) { Element = element; }
-		public IElement Element { get; private set; }
-	}
+    public sealed class ElementEventArgs : EventArgs
+    {
+        public ElementEventArgs(IElement element) { Element = element; }
+        public IElement Element { get; private set; }
+    }
 
-	public sealed class AcceptNodeEventArgs : CancelEventArgs
-	{
-		public AcceptNodeEventArgs(Node node) { Node = node; }
-		public AcceptNodeEventArgs(Node node, bool cancel) : base(cancel) { Node = node; }
-		public Node Node { get; private set; }
-	}
+    public sealed class AcceptNodeEventArgs : CancelEventArgs
+    {
+        public AcceptNodeEventArgs(Node node) { Node = node; }
+        public AcceptNodeEventArgs(Node node, bool cancel) : base(cancel) { Node = node; }
+        public Node Node { get; private set; }
+    }
 
-	public sealed class AcceptElementLocationEventArgs : CancelEventArgs
-	{
-		public AcceptElementLocationEventArgs(IElement element, Point position) { Element = element; Position = position; }
-		public AcceptElementLocationEventArgs(IElement element, Point position, bool cancel) : base(cancel) { Element = element; Position = position; }
-		public IElement Element		{ get; private set; }
-		public Point	Position	{ get; private set; }
-	}
+    public sealed class AcceptElementLocationEventArgs : CancelEventArgs
+    {
+        public AcceptElementLocationEventArgs(IElement element, Point position) { Element = element; Position = position; }
+        public AcceptElementLocationEventArgs(IElement element, Point position, bool cancel) : base(cancel) { Element = element; Position = position; }
+        public IElement Element { get; private set; }
+        public Point Position { get; private set; }
+    }
 
-	public partial class Node : IElement
-	{
-		public string			Title			{ get { return titleItem.Title; } set { titleItem.Title = value; } }
+    public partial class Node : IElement
+    {
+        public string Title
+        {
+            get;
+            set;
+        }
 
-		#region Collapsed
-		internal bool			internalCollapsed;
-		public bool				Collapsed		
-		{ 
-			get 
-			{
-				return (internalCollapsed && 
-						((state & RenderState.DraggedOver) == 0)) ||
-						HasNoItems;
-			} 
-			set 
-			{
-				var oldValue = Collapsed;
-				internalCollapsed = value;
-				if (Collapsed != oldValue)
-					titleItem.ForceResize();
-			} 
-		}
-		#endregion
+        #region Collapsed
+        internal bool internalCollapsed;
+        public bool Collapsed
+        {
+            get
+            {
+                return (internalCollapsed &&
+                        ((state & RenderState.DraggedOver) == 0)) ||
+                        HasNoItems;
+            }
+            set
+            {
+                var oldValue = Collapsed;
+                internalCollapsed = value;                
+            }
+        }
+        #endregion
 
-		public bool				HasNoItems		{ get { return Items.Count() == 0; } }
+        public bool HasNoItems { get { return Items.Count() == 0; } }
 
-		public PointF			Location		{ get; set; }
-		public object			Tag				{ get; set; }
+        public PointF Location { get; set; }
+        public object Tag { get; set; }
 
-		public IEnumerable<NodeConnection>	Connections { get { return connections; } }
-		public IEnumerable<NodeItem>		Items		{ get { return InputItems.Union(OutputItems); } }
-		
-		internal RectangleF		bounds;
-		internal RectangleF		inputBounds;
-		internal RectangleF		outputBounds;
-		internal RectangleF		itemsBounds;
-		internal RenderState	state			= RenderState.None;
-		internal RenderState	inputState		= RenderState.None;
-		internal RenderState	outputState		= RenderState.None;
+        public IEnumerable<NodeConnection> Connections { get { return connections; } }
+        public IEnumerable<NodeItem> Items { get { return InputItems.Union(OutputItems); } }
 
-		internal readonly List<NodeConnector>	inputConnectors		= new List<NodeConnector>();
-		internal readonly List<NodeConnector>	outputConnectors	= new List<NodeConnector>();
-		internal readonly List<NodeConnection>	connections			= new List<NodeConnection>();
-		internal readonly NodeTitleItem			titleItem			= new NodeTitleItem();
-		
+        public RectangleF Bounds
+        {
+            get;
+            protected set;
+        }
+        internal RectangleF inputBounds;
+        internal RectangleF outputBounds;
+        internal RectangleF itemsBounds;
+        internal RenderState state = RenderState.None;
+        internal RenderState inputState = RenderState.None;
+        internal RenderState outputState = RenderState.None;
+
+        internal readonly List<NodeConnector> inputConnectors = new List<NodeConnector>();
+        internal readonly List<NodeConnector> outputConnectors = new List<NodeConnector>();
+        internal readonly List<NodeConnection> connections = new List<NodeConnection>();
+
+        public RectangleF HeaderBounds
+        {
+            get;
+            set;
+        }
+
+     
+
         public List<NodeItem> InputItems
         {
             private set;
@@ -116,31 +129,30 @@ namespace Graph
         }
 
         public Node(string title)
-		{
-			this.Title = title;
-			titleItem.Node = this;
+        {
+            this.Title = title;
 
             InputItems = new List<NodeItem>();
             OutputItems = new List<NodeItem>();
-		}
+        }
 
-		public void AddItem(NodeItem item)
-		{
+        public void AddItem(NodeItem item)
+        {
             if (item.Node != null) item.Node.RemoveItem(item);
             item.Node = this;
 
-            if(item.ItemType == NodeItemType.Output)
+            if (item.ItemType == NodeItemType.Output)
             {
                 OutputItems.Add(item);
             }
-            else if(item.ItemType == NodeItemType.Input)
+            else if (item.ItemType == NodeItemType.Input)
             {
                 InputItems.Add(item);
-            }			
-		}
+            }
+        }
 
-		public void RemoveItem(NodeItem item)
-		{
+        public void RemoveItem(NodeItem item)
+        {
             if (item.Node != this) return;
             item.Node = null;
 
@@ -152,50 +164,50 @@ namespace Graph
             {
                 InputItems.Remove(item);
             }
-		}
-		
-		// Returns true if there are some connections that aren't connected
-		public bool AnyConnectorsDisconnected
-		{
-			get
-			{
-				foreach (var item in Items)
-				{
-					if (item.ItemType == NodeItemType.Input && item.Input.Enabled && !item.Input.HasConnection)
-						return true;
-					if (item.ItemType == NodeItemType.Output && item.Output.Enabled && !item.Output.HasConnection)
-						return true;
-				}
-				return false;
-			}
-		}
+        }
 
-		// Returns true if there are some output connections that aren't connected
-		public bool AnyOutputConnectorsDisconnected
-		{
-			get
-			{
-				foreach (var item in OutputItems)
-					if (item.Output.Enabled && !item.Output.HasConnection)
-						return true;
-				return false;
-			}
-		}
+        // Returns true if there are some connections that aren't connected
+        public bool AnyConnectorsDisconnected
+        {
+            get
+            {
+                foreach (var item in Items)
+                {
+                    if (item.ItemType == NodeItemType.Input && item.Input.Enabled && !item.Input.HasConnection)
+                        return true;
+                    if (item.ItemType == NodeItemType.Output && item.Output.Enabled && !item.Output.HasConnection)
+                        return true;
+                }
+                return false;
+            }
+        }
 
-		// Returns true if there are some input connections that aren't connected
-		public bool AnyInputConnectorsDisconnected
-		{
-			get
-			{
-				foreach (var item in InputItems)
-					if (item.Input.Enabled && !item.Input.HasConnection)
-						return true;
-				return false;
-			}
-		}
+        // Returns true if there are some output connections that aren't connected
+        public bool AnyOutputConnectorsDisconnected
+        {
+            get
+            {
+                foreach (var item in OutputItems)
+                    if (item.Output.Enabled && !item.Output.HasConnection)
+                        return true;
+                return false;
+            }
+        }
 
-		public ElementType ElementType { get { return ElementType.Node; } }
+        // Returns true if there are some input connections that aren't connected
+        public bool AnyInputConnectorsDisconnected
+        {
+            get
+            {
+                foreach (var item in InputItems)
+                    if (item.Input.Enabled && !item.Input.HasConnection)
+                        return true;
+                return false;
+            }
+        }
 
-       
-	}
+        public ElementType ElementType { get { return ElementType.Node; } }
+
+
+    }
 }

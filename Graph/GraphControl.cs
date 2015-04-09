@@ -209,7 +209,7 @@ namespace Graph
 					foreach (var node in selection.Nodes)
 					{
 						node.state = SetFlag(node.state, flag, value);
-						SetFlag(node.titleItem, flag, value);
+						
 					}
 					break;
 				}
@@ -218,7 +218,7 @@ namespace Graph
 				{
 					var node = element as Node;
 					node.state = SetFlag(node.state, flag, value);
-					SetFlag(node.titleItem, flag, value);
+					
 					break;
 				}
 
@@ -251,8 +251,7 @@ namespace Graph
 					var selection = element as NodeSelection;
 					foreach (var node in selection.Nodes)
 					{
-						node.state = SetFlag(node.state, flag, value);
-						SetFlag(node.titleItem, flag, value);
+						node.state = SetFlag(node.state, flag, value);						
 					}
 					break;
 				}
@@ -260,8 +259,7 @@ namespace Graph
 				case ElementType.Node:
 				{
 					var node = element as Node;
-					node.state = SetFlag(node.state, flag, value);
-					SetFlag(node.titleItem, flag, value);
+					node.state = SetFlag(node.state, flag, value);					
 					break;
 				}
 
@@ -739,13 +737,13 @@ namespace Graph
 
 			foreach (var item in node.Items)
 			{
-				if (item.bounds.IsEmpty)
+				if (item.ItemBounds.IsEmpty)
 					continue;
 
-				if (location.Y < item.bounds.Top)
+				if (location.Y < item.ItemBounds.Top)
 					break;
 
-				if (location.Y < item.bounds.Bottom)
+				if (location.Y < item.ItemBounds.Bottom)
 					return item;
 			}
 			return null;
@@ -801,7 +799,7 @@ namespace Graph
 				if (outputConnector != null)
 					return outputConnector;
 
-				if (node.bounds.Contains(location))
+				if (node.Bounds.Contains(location))
 				{
 					var item = FindNodeItemAt(node, location);
 					if (item != null)
@@ -854,7 +852,7 @@ namespace Graph
 				if (outputConnector != null && acceptElement(outputConnector))
 					return outputConnector;
 
-				if (node.bounds.Contains(location))
+				if (node.Bounds.Contains(location))
 				{
 					var item = FindNodeItemAt(node, location);
 					if (item != null && acceptElement(item))
@@ -1347,7 +1345,7 @@ namespace Graph
 						{
 							foreach (var node in graphNodes)
 							{
-								if (marque_rectangle.Contains(node.bounds))
+								if (marque_rectangle.Contains(node.Bounds))
 								{
 									if ((node.state & RenderState.Focus) == 0 &&
 										(ModifierKeys != Keys.Alt))
@@ -2006,8 +2004,8 @@ namespace Graph
 				return;
 
 			var location = (PointF)this.PointToClient(new Point(drgevent.X, drgevent.Y));
-			location.X -= ((dragNode.bounds.Right - dragNode.bounds.Left) / 2);
-			location.Y -= ((dragNode.titleItem.bounds.Bottom - dragNode.titleItem.bounds.Top) / 2);
+			location.X -= ((dragNode.Bounds.Right - dragNode.Bounds.Left) / 2);
+			location.Y -= ((dragNode.HeaderBounds.Bottom - dragNode.HeaderBounds.Top) / 2);
 			
 			var points = new PointF[] { location };
 			inverse_transformation.TransformPoints(points);

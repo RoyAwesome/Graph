@@ -25,81 +25,78 @@ using System.Drawing;
 
 namespace Graph.Items
 {
-	/// <summary>
-	/// An item that contains a slider which displays its value as a text on the slider itself
-	/// </summary>
-	public sealed class NodeNumericSliderItem : NodeSliderItem
-	{
-		/// <summary>
-		/// Construct a new NodeNumericSliderItem.
-		/// </summary>
-		/// <param name="text">The label for the item.</param>
-		/// <param name="sliderSize">The minimum size the slider should have inside the parent node.</param>
-		/// <param name="textSize">The text size.</param>
-		/// <param name="minValue">The lowest possible value for the slider.</param>
-		/// <param name="maxValue">The highest possible value for the slider.</param>
-		/// <param name="defaultValue">The value the slider should start with.</param>
-		/// <param name="inputEnabled">Does the item accept an input to be connected?</param>
-		/// <param name="outputEnabled">Does the item accept an output to be connected?</param>
-		public NodeNumericSliderItem( string text, float sliderSize, float textSize, float minValue, float maxValue, float defaultValue, NodeItemType type ) : base( text, sliderSize, textSize, minValue, maxValue, defaultValue, type ) {}
+    /// <summary>
+    /// An item that contains a slider which displays its value as a text on the slider itself
+    /// </summary>
+    public sealed class NodeNumericSliderItem : NodeSliderItem
+    {
+        /// <summary>
+        /// Construct a new NodeNumericSliderItem.
+        /// </summary>
+        /// <param name="text">The label for the item.</param>
+        /// <param name="sliderSize">The minimum size the slider should have inside the parent node.</param>
+        /// <param name="textSize">The text size.</param>
+        /// <param name="minValue">The lowest possible value for the slider.</param>
+        /// <param name="maxValue">The highest possible value for the slider.</param>
+        /// <param name="defaultValue">The value the slider should start with.</param>
+        /// <param name="inputEnabled">Does the item accept an input to be connected?</param>
+        /// <param name="outputEnabled">Does the item accept an output to be connected?</param>
+        public NodeNumericSliderItem(string text, float sliderSize, float textSize, float minValue, float maxValue, float defaultValue, NodeItemType type) : base(text, sliderSize, textSize, minValue, maxValue, defaultValue, type) { }
 
         /// <summary>
         /// Render the slider.
         /// </summary>
         /// <param name="graphics">The <see cref="Graphics"/> instance that should be used for drawing.</param>
-        /// <param name="minimumSize">The smallest size the slider has to fit into.</param>
-        /// <param name="location">Where the slider should be drawn.</param>
-        public override void Render(Graphics graphics, SizeF minimumSize, PointF location)
-		{
-			var size = Measure(graphics);
-			size.Width  = Math.Max(minimumSize.Width, size.Width);
-			size.Height = Math.Max(minimumSize.Height, size.Height);
+        /// 
+        /// 
+        public override void RenderContent(Graphics graphics)
+        {
 
-			var sliderOffset	= Spacing + this.textSize.Width;
-			var sliderWidth		= size.Width - sliderOffset	;
+            var sliderOffset = Spacing + this.textSize.Width;
+            var sliderWidth = ContentBounds.Size.Width - sliderOffset;
 
-			var textRect	= new RectangleF(location, size);
-			var sliderBox	= new RectangleF(location, size);
-			var sliderRect	= new RectangleF(location, size);
-			
-			// Calculate bounds for outer rectangle
-			sliderRect.X		= sliderRect.Right - sliderWidth;
-			sliderRect.Y		+= ((sliderRect.Bottom - sliderRect.Top) - SliderHeight) / 2.0f;
-			sliderRect.Width	= sliderWidth;
-			sliderRect.Height	= SliderHeight;
-			
-			textRect.Width -= sliderWidth + Spacing;
+            var textRect = new RectangleF(ContentBounds.Location, ContentBounds.Size);
+            var sliderBox = new RectangleF(ContentBounds.Location, ContentBounds.Size);
+            var sliderRect = new RectangleF(ContentBounds.Location, ContentBounds.Size);
 
-			var valueSize		= (this.MaxValue - this.MinValue);
-			this.sliderRect		= sliderRect;
-			this.sliderRect.X	+= SliderBoxSize / 2.0f;
+            // Calculate bounds for outer rectangle
+            sliderRect.X = sliderRect.Right - sliderWidth;
+            sliderRect.Y += ((sliderRect.Bottom - sliderRect.Top) - SliderHeight) / 2.0f;
+            sliderRect.Width = sliderWidth;
+            sliderRect.Height = SliderHeight;
 
-			// Calculate bounds for inner rectangle
-			sliderBox.X			= sliderRect.X;
-			sliderBox.Y			= sliderRect.Y;
-			sliderBox.Width		= (this.Value * this.sliderRect.Width) / valueSize;
-			sliderBox.Height	= SliderHeight;
+            textRect.Width -= sliderWidth + Spacing;
 
-			// Draw label
-			graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, textRect, GraphConstants.LeftTextStringFormat);
-			
-			// Draw inner rectangle
-			graphics.FillRectangle(Brushes.LightGray, sliderBox.X, sliderBox.Y, sliderBox.Width, sliderBox.Height);
+            var valueSize = (this.MaxValue - this.MinValue);
+            this.sliderRect = sliderRect;
+            this.sliderRect.X += SliderBoxSize / 2.0f;
 
-			// Draw outer rectangle
-			if ((state & (RenderState.Hover | RenderState.Dragging)) != 0)
-				graphics.DrawRectangle(Pens.White, sliderRect.X, sliderRect.Y, sliderRect.Width, sliderRect.Height);
-			else
-				graphics.DrawRectangle(Pens.Black, sliderRect.X, sliderRect.Y, sliderRect.Width, sliderRect.Height);
+            // Calculate bounds for inner rectangle
+            sliderBox.X = sliderRect.X;
+            sliderBox.Y = sliderRect.Y;
+            sliderBox.Width = (this.Value * this.sliderRect.Width) / valueSize;
+            sliderBox.Height = SliderHeight;
 
-			// Draw value marker into box
-			if ((state & (RenderState.Hover | RenderState.Dragging)) != 0)
-				graphics.DrawLine(Pens.White, sliderBox.X + sliderBox.Width, sliderBox.Y, sliderBox.X + sliderBox.Width, sliderBox.Y + sliderBox.Height);
-			else
-				graphics.DrawLine(Pens.Black, sliderBox.X + sliderBox.Width, sliderBox.Y, sliderBox.X + sliderBox.Width, sliderBox.Y + sliderBox.Height);
+            // Draw label
+            graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, textRect, GraphConstants.LeftTextStringFormat);
 
-			// Draw value
-			graphics.DrawString(this.Value.ToString(), SystemFonts.MenuFont, Brushes.Black, sliderRect, GraphConstants.LeftTextStringFormat);
-		}
-	}
+            // Draw inner rectangle
+            graphics.FillRectangle(Brushes.LightGray, sliderBox.X, sliderBox.Y, sliderBox.Width, sliderBox.Height);
+
+            // Draw outer rectangle
+            if ((state & (RenderState.Hover | RenderState.Dragging)) != 0)
+                graphics.DrawRectangle(Pens.White, sliderRect.X, sliderRect.Y, sliderRect.Width, sliderRect.Height);
+            else
+                graphics.DrawRectangle(Pens.Black, sliderRect.X, sliderRect.Y, sliderRect.Width, sliderRect.Height);
+
+            // Draw value marker into box
+            if ((state & (RenderState.Hover | RenderState.Dragging)) != 0)
+                graphics.DrawLine(Pens.White, sliderBox.X + sliderBox.Width, sliderBox.Y, sliderBox.X + sliderBox.Width, sliderBox.Y + sliderBox.Height);
+            else
+                graphics.DrawLine(Pens.Black, sliderBox.X + sliderBox.Width, sliderBox.Y, sliderBox.X + sliderBox.Width, sliderBox.Y + sliderBox.Height);
+
+            // Draw value
+            graphics.DrawString(this.Value.ToString(), SystemFonts.MenuFont, Brushes.Black, sliderRect, GraphConstants.LeftTextStringFormat);
+        }
+    }
 }

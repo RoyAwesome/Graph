@@ -31,87 +31,12 @@ namespace Graph
 {
 	public static class GraphRenderer
 	{
-		static IEnumerable<NodeItem> EnumerateNodeItems(Node node)
-		{
-			if (node == null)
-				yield break;
-
-			yield return node.titleItem;
-			if (node.Collapsed)
-				yield break;
-			
-			foreach (var item in node.Items)
-				yield return item;
-		}
-
-		public static SizeF Measure(Graphics context, Node node)
-		{
-			if (node == null)
-				return SizeF.Empty;
-
-			SizeF size = Size.Empty;
-			size.Height = //(int)NodeConstants.TopHeight + 
-				(int)GraphConstants.BottomHeight;
-			foreach (var item in EnumerateNodeItems(node))
-			{
-				var itemSize = item.Measure(context);
-				size.Width = Math.Max(size.Width, itemSize.Width);
-				size.Height += GraphConstants.ItemSpacing + itemSize.Height;
-			}
-			
-			if (node.Collapsed)
-				size.Height -= GraphConstants.ItemSpacing;
-
-			size.Width += GraphConstants.NodeExtraWidth;
-			return size;
-		}
-
-		static SizeF PreRenderItem(Graphics graphics, NodeItem item, PointF position)
-		{
-			var itemSize = (SizeF)item.Measure(graphics);
-			item.bounds = new RectangleF(position, itemSize);
-			return itemSize;
-		}
-
-		static void RenderItem(Graphics graphics, SizeF minimumSize, NodeItem item, PointF position)
-		{
-			item.Render(graphics, minimumSize, position);
-		}
-
+		
 		private static Pen BorderPen = new Pen(Color.FromArgb(64, 64, 64));
 
 		internal static void RenderConnector(Graphics graphics, RectangleF bounds, RenderState state)
 		{
-			using (var brush = new SolidBrush(GetArrowLineColor(state)))
-			{
-				graphics.FillEllipse(brush, bounds);
-			}
 			
-			if (state == RenderState.None)
-			{
-				graphics.DrawEllipse(Pens.Black, bounds);
-			} else
-			// When we're compatible, but not dragging from this node we render a highlight
-			if ((state & (RenderState.Compatible | RenderState.Dragging)) == RenderState.Compatible) 
-			{
-				// First draw the normal black border
-				graphics.DrawEllipse(Pens.Black, bounds);
-
-				// Draw an additional highlight around the connector
-				RectangleF highlightBounds = new RectangleF(bounds.X,bounds.Y,bounds.Width,bounds.Height);
-				highlightBounds.Width += 10;
-				highlightBounds.Height += 10;
-				highlightBounds.X -= 5;
-				highlightBounds.Y -= 5;
-				graphics.DrawEllipse(Pens.OrangeRed, highlightBounds);
-			} else
-			{
-				graphics.DrawArc(Pens.Black, bounds, 90, 180);
-				using (var pen = new Pen(GetArrowLineColor(state)))
-				{
-					graphics.DrawArc(pen, bounds, 270, 180);
-				}
-			}			
 		}
 
 		internal static void RenderArrow(Graphics graphics, RectangleF bounds, RenderState connectionState)
@@ -147,99 +72,7 @@ namespace Graph
 
 		public static void PerformLayout(Graphics graphics, Node node)
 		{
-			if (node == null)
-				return;
-			var size		= Measure(graphics, node);
-			var position	= node.Location;
-			node.bounds		= new RectangleF(position, size);
-			
-			var path				= new GraphicsPath(FillMode.Winding);
-			int connectorSize		= (int)GraphConstants.ConnectorSize;
-			int halfConnectorSize	= (int)Math.Ceiling(connectorSize / 2.0f);
-			var connectorOffset		= (int)Math.Floor((GraphConstants.MinimumItemHeight - GraphConstants.ConnectorSize) / 2.0f);
-			var left				= position.X + halfConnectorSize;
-			var top					= position.Y;
-			var right				= position.X + size.Width - halfConnectorSize;
-			var bottom				= position.Y + size.Height;
-			
-			node.inputConnectors.Clear();
-			node.outputConnectors.Clear();
-			//node.connections.Clear();
-
-			var itemPosition = position;
-			itemPosition.X += connectorSize + (int)GraphConstants.HorizontalSpacing;
-			if (node.Collapsed)
-			{
-				foreach (var item in node.Items)
-				{
-					var inputConnector	= item.Input;
-					if (inputConnector != null && inputConnector.Enabled)
-					{
-						inputConnector.bounds = Rectangle.Empty;
-						node.inputConnectors.Add(inputConnector);
-					}
-					var outputConnector = item.Output;
-					if (outputConnector != null && outputConnector.Enabled)
-					{
-						outputConnector.bounds = Rectangle.Empty;
-						node.outputConnectors.Add(outputConnector);
-					}
-				}
-				var itemSize		= PreRenderItem(graphics, node.titleItem, itemPosition);
-				var realHeight		= itemSize.Height - GraphConstants.TopHeight;
-				var connectorY		= itemPosition.Y  + (int)Math.Ceiling(realHeight / 2.0f);
-				
-				node.inputBounds	= new RectangleF(left  - (GraphConstants.ConnectorSize / 2), 
-													 connectorY, 
-													 GraphConstants.ConnectorSize, 
-													 GraphConstants.ConnectorSize);
-				node.outputBounds	= new RectangleF(right - (GraphConstants.ConnectorSize / 2), 
-													 connectorY, 
-													 GraphConstants.ConnectorSize, 
-													 GraphConstants.ConnectorSize);
-			} else
-			{
-				node.inputBounds	= Rectangle.Empty;
-				node.outputBounds	= Rectangle.Empty;
-				
-				foreach (var item in EnumerateNodeItems(node))
-				{
-					var itemSize		= PreRenderItem(graphics, item, itemPosition);
-					var realHeight		= itemSize.Height;
-					var inputConnector	= item.Input;
-					if (inputConnector != null && inputConnector.Enabled)
-					{
-						if (itemSize.IsEmpty)
-						{
-							inputConnector.bounds = Rectangle.Empty;
-						} else
-						{
-							inputConnector.bounds = new RectangleF(	left - (GraphConstants.ConnectorSize / 2), 
-																	itemPosition.Y + connectorOffset, 
-																	GraphConstants.ConnectorSize, 
-																	GraphConstants.ConnectorSize);
-						}
-						node.inputConnectors.Add(inputConnector);
-					}
-					var outputConnector = item.Output;
-					if (outputConnector != null && outputConnector.Enabled)
-					{
-						if (itemSize.IsEmpty)
-						{
-							outputConnector.bounds = Rectangle.Empty;
-						} else
-						{
-							outputConnector.bounds = new RectangleF(right - (GraphConstants.ConnectorSize / 2), 
-																	itemPosition.Y + realHeight - (connectorOffset + GraphConstants.ConnectorSize), 
-																	GraphConstants.ConnectorSize, 
-																	GraphConstants.ConnectorSize);
-						}
-						node.outputConnectors.Add(outputConnector);
-					}
-					itemPosition.Y += itemSize.Height + GraphConstants.ItemSpacing;
-				}
-			}
-			node.itemsBounds = new RectangleF(left, top, right - left, bottom - top);
+            node.PerformLayout(graphics);
 		}
 
 		static void Render(Graphics graphics, Node node)
@@ -370,7 +203,7 @@ namespace Graph
 			return region;
 		}
 
-		static Color GetArrowLineColor(RenderState state)
+		public static Color GetArrowLineColor(RenderState state)
 		{
 			if ((state & (RenderState.Hover | RenderState.Dragging)) != 0)
 			{
@@ -401,8 +234,8 @@ namespace Graph
 			} else
 				return Color.LightGray;
 		}
-		
-		static PointF[] GetArrowPoints(float x, float y, float extra_thickness = 0)
+
+        public static PointF[] GetArrowPoints(float x, float y, float extra_thickness = 0)
 		{
 			return new PointF[]{
 					new PointF(x - (GraphConstants.ConnectorSize + 1.0f) - extra_thickness, y + (GraphConstants.ConnectorSize / 1.5f) + extra_thickness),
@@ -410,7 +243,7 @@ namespace Graph
 					new PointF(x - (GraphConstants.ConnectorSize + 1.0f) - extra_thickness, y - (GraphConstants.ConnectorSize / 1.5f) - extra_thickness)};
 		}
 
-		static List<PointF> GetArrowLinePoints(float x1, float y1, float x2, float y2, out float centerX, out float centerY, float extra_thickness = 0)
+        public static List<PointF> GetArrowLinePoints(float x1, float y1, float x2, float y2, out float centerX, out float centerY, float extra_thickness = 0)
 		{
 			var widthX	= (x2 - x1);
 			var lengthX = Math.Max(60, Math.Abs(widthX / 2)) 

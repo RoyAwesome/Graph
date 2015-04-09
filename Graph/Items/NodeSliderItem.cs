@@ -119,7 +119,7 @@ namespace Graph.Items
 		protected const int SliderHeight	= 8;
 		protected const int Spacing		= 2;
 
-        public override SizeF Measure(Graphics graphics)
+        public override SizeF MeasureContent(Graphics graphics)
 		{
 			if (!string.IsNullOrWhiteSpace(this.Text))
 			{
@@ -140,18 +140,15 @@ namespace Graph.Items
 			}
 		}
 
-        public override void Render(Graphics graphics, SizeF minimumSize, PointF location)
-		{
-			var size = Measure(graphics);
-			size.Width  = Math.Max(minimumSize.Width, size.Width);
-			size.Height = Math.Max(minimumSize.Height, size.Height);
-
+        public override void RenderContent(Graphics graphics)
+        {
+			
 			var sliderOffset	= Spacing + this.textSize.Width;
-			var sliderWidth		= size.Width - (Spacing + this.textSize.Width);
+			var sliderWidth		= ContentBounds.Size.Width - (Spacing + this.textSize.Width);
 
-			var textRect	= new RectangleF(location, size);
-			var sliderBox	= new RectangleF(location, size);
-			var sliderRect	= new RectangleF(location, size);
+			var textRect	= new RectangleF(ContentBounds.Location, ContentBounds.Size);
+			var sliderBox	= new RectangleF(ContentBounds.Location, ContentBounds.Size);
+			var sliderRect	= new RectangleF(ContentBounds.Location, ContentBounds.Size);
 			sliderRect.X =		 sliderRect.Right - sliderWidth;
 			sliderRect.Y		+= ((sliderRect.Bottom - sliderRect.Top) - SliderHeight) / 2.0f;
 			sliderRect.Width	= sliderWidth;
@@ -183,10 +180,6 @@ namespace Graph.Items
 			else
 				graphics.DrawRectangle(Pens.Black, sliderBox.X, sliderBox.Y, sliderBox.Width, sliderBox.Height);
 		}
-
-        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

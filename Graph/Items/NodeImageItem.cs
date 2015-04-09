@@ -53,7 +53,7 @@ namespace Graph.Items
 
 
 
-        public override SizeF Measure(Graphics graphics)
+        public override SizeF MeasureContent(Graphics graphics)
 		{
 			if (this.Image != null)
 			{
@@ -83,11 +83,10 @@ namespace Graph.Items
 			}
 		}
 
-        public override void Render(Graphics graphics, SizeF minimumSize, PointF location)
-		{
-			var size = Measure(graphics);
-			size.Width  = Math.Max(minimumSize.Width, size.Width);
-			size.Height = Math.Max(minimumSize.Height, size.Height);
+        public override void RenderContent(Graphics graphics)
+        {
+            var location = ContentBounds.Location;
+            var size = ContentBounds.Size;
 
 			if (this.Width.HasValue &&
 				size.Width > this.Width.Value)
@@ -105,10 +104,6 @@ namespace Graph.Items
 			else
 				graphics.DrawRectangle(Pens.Black, rect.Left, rect.Top, rect.Width, rect.Height);
 		}
-
-        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
-        {
-            throw new NotImplementedException();
-        }
+              
     }
 }

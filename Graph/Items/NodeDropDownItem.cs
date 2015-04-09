@@ -103,7 +103,7 @@ namespace Graph.Items
 			return true;
 		}
 
-        public override SizeF Measure(Graphics graphics)
+        public override SizeF MeasureContent(Graphics graphics)
 		{
 			var text = string.Empty;
 			if (Items != null &&
@@ -127,36 +127,31 @@ namespace Graph.Items
 			}
 		}
 
-        public override void Render(Graphics graphics, SizeF minimumSize, PointF location)
-		{
+        public override void RenderContent(Graphics graphics)
+        {
 			var text = string.Empty;
 			if (Items != null &&
 				SelectedIndex >= 0 && SelectedIndex < Items.Length)
 				text = Items[SelectedIndex];
 
-			var size = Measure(graphics);
-			size.Width  = Math.Max(minimumSize.Width, size.Width);
-			size.Height = Math.Max(minimumSize.Height, size.Height);
+		
 
-			var path = GraphRenderer.CreateRoundedRectangle(size, location);
+			var path = GraphRenderer.CreateRoundedRectangle(ContentBounds.Size, ContentBounds.Location);
 
+            var location = ContentBounds.Location;
 			location.Y += 1;
 			location.X += 1;
 
 			if ((state & RenderState.Hover) == RenderState.Hover)
 			{
 				graphics.DrawPath(Pens.White, path);
-				graphics.DrawString(text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.LeftTextStringFormat);
+				graphics.DrawString(text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, ContentBounds.Size), GraphConstants.LeftTextStringFormat);
 			} else
 			{
 				graphics.DrawPath(Pens.Black, path);
-				graphics.DrawString(text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.LeftTextStringFormat);
+				graphics.DrawString(text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, ContentBounds.Size), GraphConstants.LeftTextStringFormat);
 			}
 		}
-
-        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
-        {
-            throw new NotImplementedException();
-        }
+               
     }
 }

@@ -64,7 +64,7 @@ namespace Graph.Items
 		const int ColorBoxSize = 16;
 		const int Spacing = 2;
 
-        public override SizeF Measure(Graphics graphics)
+        public override SizeF MeasureContent(Graphics graphics)
 		{
 			if (!string.IsNullOrWhiteSpace(this.Text))
 			{
@@ -87,15 +87,13 @@ namespace Graph.Items
 				return this.TextSize;
 			} else
 			{
-				return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.TitleHeight + GraphConstants.TopHeight);
+				return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.HeaderHeight + GraphConstants.TopHeight);
 			}
 		}
 
-        public override void Render(Graphics graphics, SizeF minimumSize, PointF location)
-		{
-			var size = Measure(graphics);
-			size.Width  = Math.Max(minimumSize.Width, size.Width);
-			size.Height = Math.Max(minimumSize.Height, size.Height);
+        public override void RenderContent(Graphics graphics)
+        {
+			
 
 			var alignment	= HorizontalAlignment.Center;
 			var format		= GraphConstants.CenterTextStringFormat;
@@ -112,8 +110,8 @@ namespace Graph.Items
 				}
 			}
 
-			var rect		= new RectangleF(location, size);
-			var colorBox	= new RectangleF(location, size);
+			var rect		= ContentBounds;
+			var colorBox	= ContentBounds;
 			colorBox.Width	= ColorBoxSize;
 			switch (alignment)
 			{
@@ -150,10 +148,6 @@ namespace Graph.Items
 			//}
 			//graphics.DrawRectangle(Pens.Black, colorBox.X, colorBox.Y, colorBox.Width, colorBox.Height);
 		}
-
-        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
-        {
-            throw new NotImplementedException();
-        }
+               
     }
 }

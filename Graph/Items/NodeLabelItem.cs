@@ -59,7 +59,7 @@ namespace Graph.Items
         internal SizeF TextSize;
 
 
-        public override SizeF Measure(Graphics graphics)
+        public override SizeF MeasureContent(Graphics graphics)
         {
             if (!string.IsNullOrWhiteSpace(this.Text))
             {
@@ -93,30 +93,23 @@ namespace Graph.Items
             }
         }
 
-        public override void Render(Graphics graphics, SizeF minimumSize, PointF location)
-        {
-            var size = Measure(graphics);
-            size.Width = Math.Max(minimumSize.Width, size.Width);
-            size.Height = Math.Max(minimumSize.Height, size.Height);
+        public override void RenderContent(Graphics graphics)
+        {            
 
             if (this.Input != null) 
             {
-                graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.LeftTextStringFormat);
+                graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, ContentBounds, GraphConstants.LeftTextStringFormat);
             }
             else if (this.Output != null)
             {
-                graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.RightTextStringFormat);
+                graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, ContentBounds, GraphConstants.RightTextStringFormat);
             }
             else
             {
-                graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.CenterTextStringFormat);
+                graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, ContentBounds, GraphConstants.CenterTextStringFormat);
             }
 
         }
-
-        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
-        {
-
-        }
+             
     }
 }

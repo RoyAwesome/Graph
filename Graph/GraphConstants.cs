@@ -33,16 +33,23 @@ namespace Graph
 	{
 		public const int MinimumItemWidth		= 64+8;
 		public const int MinimumItemHeight		= 16;
-		public const int TitleHeight			= 12;
-		public const int ItemSpacing			= 3;
+		
+		public const int ItemSpacing			= 5;
 		public const int TopHeight				= 4;
 		public const int BottomHeight			= 4;
 		public const int CornerSize				= 4;
 		public const int ConnectorSize			= 8;
 		public const int HorizontalSpacing		= 2;
 		public const int NodeExtraWidth			= ((int)GraphConstants.ConnectorSize + (int)GraphConstants.HorizontalSpacing) * 2;
-		
-		public const TextFormatFlags TitleTextFlags	=	TextFormatFlags.ExternalLeading |
+        public const int HorizontalColumnSpacing = 20;
+      
+        public const int PinSpacing = 10; //Number of pixels between the Connector Pin and the rest of the item
+
+        public const int HeaderTopSpacing = 5;
+        public const int HeaderHeight = 18;
+        public const int HeaderBottomSpacing = ItemSpacing * 3; // Number of pixels between the Header box and the rest of the elements
+
+        public const TextFormatFlags TitleTextFlags	=	TextFormatFlags.ExternalLeading |
 															TextFormatFlags.GlyphOverhangPadding |
 															TextFormatFlags.HorizontalCenter |
 															TextFormatFlags.NoClipping |
@@ -80,7 +87,7 @@ namespace Graph
         public static readonly StringFormat RightTextStringFormat;
         public static readonly StringFormat TitleMeasureStringFormat;
         public static readonly StringFormat CenterMeasureTextStringFormat;
-		internal static readonly StringFormat LeftMeasureTextStringFormat;
+		public static readonly StringFormat LeftMeasureTextStringFormat;
         public static readonly StringFormat RightMeasureTextStringFormat;
 
 		static GraphConstants()

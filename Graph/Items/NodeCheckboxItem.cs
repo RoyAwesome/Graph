@@ -79,7 +79,7 @@ namespace Graph.Items
 		internal SizeF TextSize;
 
 
-        public override SizeF Measure(Graphics graphics)
+        public override SizeF MeasureContent(Graphics graphics)
 		{
 			if (!string.IsNullOrWhiteSpace(this.Text))
 			{
@@ -96,19 +96,17 @@ namespace Graph.Items
 				return this.TextSize;
 			} else
 			{
-				return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.TitleHeight + GraphConstants.TopHeight);
+				return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.HeaderHeight + GraphConstants.TopHeight);
 			}
 		}
 
-        public override void Render(Graphics graphics, SizeF minimumSize, PointF location)
-		{
-			var size = Measure(graphics);
-			size.Width  = Math.Max(minimumSize.Width, size.Width);
-			size.Height = Math.Max(minimumSize.Height, size.Height);
-			
-			using (var path = GraphRenderer.CreateRoundedRectangle(size, location))
+        public override void RenderContent(Graphics graphics)
+        {
+			var size = ContentBounds.Size;
+      			
+			using (var path = GraphRenderer.CreateRoundedRectangle(size, ContentBounds.Location))
 			{
-				var rect = new RectangleF(location, size);
+                var rect = ContentBounds;
 				if (this.Checked)
 				{
 					using (var brush = new SolidBrush(Color.FromArgb(128+32, Color.White)))
@@ -129,11 +127,6 @@ namespace Graph.Items
 				else	
 					graphics.DrawPath(Pens.Black, path);
 			}
-		}
-
-        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
-        {
-            throw new NotImplementedException();
-        }
+		}       
     }
 }
