@@ -27,6 +27,7 @@ using System.Text;
 using System.Drawing;
 using System.ComponentModel;
 using Graph.Items;
+using System.Drawing.Drawing2D;
 
 namespace Graph
 {
@@ -57,7 +58,7 @@ namespace Graph
 		public Point	Position	{ get; private set; }
 	}
 
-	public class Node : IElement
+	public partial class Node : IElement
 	{
 		public string			Title			{ get { return titleItem.Title; } set { titleItem.Title = value; } }
 
@@ -69,7 +70,7 @@ namespace Graph
 			{
 				return (internalCollapsed && 
 						((state & RenderState.DraggedOver) == 0)) ||
-						nodeItems.Count == 0;
+						HasNoItems;
 			} 
 			set 
 			{
@@ -81,13 +82,13 @@ namespace Graph
 		}
 		#endregion
 
-		public bool				HasNoItems		{ get { return nodeItems.Count == 0; } }
+		public bool				HasNoItems		{ get { return Items.Count() == 0; } }
 
 		public PointF			Location		{ get; set; }
 		public object			Tag				{ get; set; }
 
 		public IEnumerable<NodeConnection>	Connections { get { return connections; } }
-		public IEnumerable<NodeItem>		Items		{ get { return nodeItems; } }
+		public IEnumerable<NodeItem>		Items		{ get { return InputItems.Union(OutputItems); } }
 		
 		internal RectangleF		bounds;
 		internal RectangleF		inputBounds;
@@ -101,30 +102,56 @@ namespace Graph
 		internal readonly List<NodeConnector>	outputConnectors	= new List<NodeConnector>();
 		internal readonly List<NodeConnection>	connections			= new List<NodeConnection>();
 		internal readonly NodeTitleItem			titleItem			= new NodeTitleItem();
-		readonly List<NodeItem>					nodeItems			= new List<NodeItem>();
+		
+        public List<NodeItem> InputItems
+        {
+            private set;
+            get;
+        }
 
-		public Node(string title)
+        public List<NodeItem> OutputItems
+        {
+            private set;
+            get;
+        }
+
+        public Node(string title)
 		{
 			this.Title = title;
 			titleItem.Node = this;
+
+            InputItems = new List<NodeItem>();
+            OutputItems = new List<NodeItem>();
 		}
 
 		public void AddItem(NodeItem item)
 		{
-			if (nodeItems.Contains(item))
-				return;
-			if (item.Node != null)
-				item.Node.RemoveItem(item);
-			nodeItems.Add(item);
-			item.Node = this;
+            if (item.Node != null) item.Node.RemoveItem(item);
+            item.Node = this;
+
+            if(item.ItemType == NodeItemType.Output)
+            {
+                OutputItems.Add(item);
+            }
+            else if(item.ItemType == NodeItemType.Input)
+            {
+                InputItems.Add(item);
+            }			
 		}
 
 		public void RemoveItem(NodeItem item)
 		{
-			if (!nodeItems.Contains(item))
-				return;
-			item.Node = null;
-			nodeItems.Remove(item);
+            if (item.Node != this) return;
+            item.Node = null;
+
+            if (item.ItemType == NodeItemType.Output)
+            {
+                OutputItems.Remove(item);
+            }
+            else if (item.ItemType == NodeItemType.Input)
+            {
+                InputItems.Remove(item);
+            }
 		}
 		
 		// Returns true if there are some connections that aren't connected
@@ -132,11 +159,11 @@ namespace Graph
 		{
 			get
 			{
-				foreach (var item in nodeItems)
+				foreach (var item in Items)
 				{
-					if (item.Input.Enabled && !item.Input.HasConnection)
+					if (item.ItemType == NodeItemType.Input && item.Input.Enabled && !item.Input.HasConnection)
 						return true;
-					if (item.Output.Enabled && !item.Output.HasConnection)
+					if (item.ItemType == NodeItemType.Output && item.Output.Enabled && !item.Output.HasConnection)
 						return true;
 				}
 				return false;
@@ -148,7 +175,7 @@ namespace Graph
 		{
 			get
 			{
-				foreach (var item in nodeItems)
+				foreach (var item in OutputItems)
 					if (item.Output.Enabled && !item.Output.HasConnection)
 						return true;
 				return false;
@@ -160,7 +187,7 @@ namespace Graph
 		{
 			get
 			{
-				foreach (var item in nodeItems)
+				foreach (var item in InputItems)
 					if (item.Input.Enabled && !item.Input.HasConnection)
 						return true;
 				return false;
@@ -168,5 +195,7 @@ namespace Graph
 		}
 
 		public ElementType ElementType { get { return ElementType.Node; } }
+
+       
 	}
 }

@@ -29,76 +29,94 @@ using System.Drawing;
 
 namespace Graph.Items
 {
-	public sealed class NodeLabelItem : NodeItem
-	{
-		public NodeLabelItem(string text, bool inputEnabled, bool outputEnabled) :
-			base(inputEnabled, outputEnabled)
-		{
-			this.Text = text;
-		}
+    public sealed class NodeLabelItem : NodeItem
+    {
+        public NodeLabelItem(string text, NodeItemType type) :
+            base(type)
+        {
+            this.Text = text;
+        }
 
-		public NodeLabelItem(string text) :
-			this(text, false, false) { }
+        public NodeLabelItem(string text) :
+            this(text, NodeItemType.Output)
+        { }
 
-		#region Text
-		string internalText = string.Empty;
-		public string Text
-		{
-			get { return internalText; }
-			set
-			{
-				if (internalText == value)
-					return;
-				internalText = value;
-				TextSize = Size.Empty;
-			}
-		}
-		#endregion
+        #region Text
+        string internalText = string.Empty;
+        public string Text
+        {
+            get { return internalText; }
+            set
+            {
+                if (internalText == value)
+                    return;
+                internalText = value;
+                TextSize = Size.Empty;
+            }
+        }
+        #endregion
 
-		internal SizeF TextSize;
+        internal SizeF TextSize;
 
 
         public override SizeF Measure(Graphics graphics)
-		{
-			if (!string.IsNullOrWhiteSpace(this.Text))
-			{
-				if (this.TextSize.IsEmpty)
-				{
-					var size = new Size(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
+        {
+            if (!string.IsNullOrWhiteSpace(this.Text))
+            {
+                if (this.TextSize.IsEmpty)
+                {
+                    var size = new Size(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
 
-					if (this.Input.Enabled != this.Output.Enabled)
-					{
-						if (this.Input.Enabled)
-							this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
-						else
-							this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.RightMeasureTextStringFormat);
-					} else
-						this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.CenterMeasureTextStringFormat);
+                    if (this.Input != null)
+                    {
+                        this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
+                    }
+                    else if (this.Output != null)
+                    {
+                        this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.RightMeasureTextStringFormat);
+                    }
 
-					this.TextSize.Width  = Math.Max(size.Width, this.TextSize.Width);
-					this.TextSize.Height = Math.Max(size.Height, this.TextSize.Height);
-				}
-				return this.TextSize;
-			} else
-			{
-				return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
-			}
-		}
+                    else
+                    {
+                        this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.CenterMeasureTextStringFormat);
+                    }
+
+
+                    this.TextSize.Width = Math.Max(size.Width, this.TextSize.Width);
+                    this.TextSize.Height = Math.Max(size.Height, this.TextSize.Height);
+                }
+                return this.TextSize;
+            }
+            else
+            {
+                return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
+            }
+        }
 
         public override void Render(Graphics graphics, SizeF minimumSize, PointF location)
-		{
-			var size = Measure(graphics);
-			size.Width  = Math.Max(minimumSize.Width, size.Width);
-			size.Height = Math.Max(minimumSize.Height, size.Height);
+        {
+            var size = Measure(graphics);
+            size.Width = Math.Max(minimumSize.Width, size.Width);
+            size.Height = Math.Max(minimumSize.Height, size.Height);
 
-			if (this.Input.Enabled != this.Output.Enabled)
-			{
-				if (this.Input.Enabled)
-					graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.LeftTextStringFormat);
-				else
-					graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.RightTextStringFormat);
-			} else
-				graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.CenterTextStringFormat);
-		}
-	}
+            if (this.Input != null) 
+            {
+                graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.LeftTextStringFormat);
+            }
+            else if (this.Output != null)
+            {
+                graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.RightTextStringFormat);
+            }
+            else
+            {
+                graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.CenterTextStringFormat);
+            }
+
+        }
+
+        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
+        {
+
+        }
+    }
 }

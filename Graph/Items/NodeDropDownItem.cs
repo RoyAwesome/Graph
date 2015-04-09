@@ -42,8 +42,8 @@ namespace Graph.Items
 	{
 		public event EventHandler<AcceptNodeSelectionChangedEventArgs> SelectionChanged;
 
-		public NodeDropDownItem(string[] items, int selectedIndex, bool inputEnabled, bool outputEnabled) :
-			base(inputEnabled, outputEnabled)
+		public NodeDropDownItem(string[] items, int selectedIndex, NodeItemType type) :
+			base(type)
 		{
 			this.Items = items.ToArray();
 			this.SelectedIndex = selectedIndex;
@@ -153,5 +153,10 @@ namespace Graph.Items
 				graphics.DrawString(text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.LeftTextStringFormat);
 			}
 		}
-	}
+
+        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

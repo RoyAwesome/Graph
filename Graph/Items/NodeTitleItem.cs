@@ -82,5 +82,10 @@ namespace Graph.Items
 			else
 				graphics.DrawString(this.Title, SystemFonts.CaptionFont, Brushes.Black, new RectangleF(location, size), GraphConstants.TitleStringFormat);
 		}
-	}
+
+        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
+        {
+            
+        }
+    }
 }

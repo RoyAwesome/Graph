@@ -33,14 +33,14 @@ namespace Graph.Items
 	{
 		
 
-		public NodeImageItem(Image image, bool inputEnabled = false, bool outputEnabled = false) :
-			base(inputEnabled, outputEnabled)
+		public NodeImageItem(Image image, NodeItemType type) :
+			base(type)
 		{
 			this.Image = image;
 		}
 
-		public NodeImageItem(Image image, int width, int height, bool inputEnabled = false, bool outputEnabled = false) :
-			base(inputEnabled, outputEnabled)
+		public NodeImageItem(Image image, int width, int height, NodeItemType type) :
+			base(type)
 		{
 			this.Width = width;
 			this.Height = height;
@@ -105,5 +105,10 @@ namespace Graph.Items
 			else
 				graphics.DrawRectangle(Pens.Black, rect.Left, rect.Top, rect.Width, rect.Height);
 		}
-	}
+
+        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

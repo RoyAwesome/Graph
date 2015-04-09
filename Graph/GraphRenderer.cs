@@ -80,7 +80,7 @@ namespace Graph
 
 		private static Pen BorderPen = new Pen(Color.FromArgb(64, 64, 64));
 
-		static void RenderConnector(Graphics graphics, RectangleF bounds, RenderState state)
+		internal static void RenderConnector(Graphics graphics, RectangleF bounds, RenderState state)
 		{
 			using (var brush = new SolidBrush(GetArrowLineColor(state)))
 			{
@@ -114,7 +114,7 @@ namespace Graph
 			}			
 		}
 
-		static void RenderArrow(Graphics graphics, RectangleF bounds, RenderState connectionState)
+		internal static void RenderArrow(Graphics graphics, RectangleF bounds, RenderState connectionState)
 		{
 			var x = (bounds.Left + bounds.Right) / 2.0f;
 			var y = (bounds.Top + bounds.Bottom) / 2.0f;
@@ -244,120 +244,7 @@ namespace Graph
 
 		static void Render(Graphics graphics, Node node)
 		{
-			var size		= node.bounds.Size;
-			var position	= node.bounds.Location;
-			
-			int cornerSize			= (int)GraphConstants.CornerSize * 2;
-			int connectorSize		= (int)GraphConstants.ConnectorSize;
-			int halfConnectorSize	= (int)Math.Ceiling(connectorSize / 2.0f);
-			var connectorOffset		= (int)Math.Floor((GraphConstants.MinimumItemHeight - GraphConstants.ConnectorSize) / 2.0f);
-			var left				= position.X + halfConnectorSize;
-			var top					= position.Y;
-			var right				= position.X + size.Width - halfConnectorSize;
-			var bottom				= position.Y + size.Height;
-			using (var path = new GraphicsPath(FillMode.Winding))
-			{
-				path.AddArc(left, top, cornerSize, cornerSize, 180, 90);
-				path.AddArc(right - cornerSize, top, cornerSize, cornerSize, 270, 90);
-
-				path.AddArc(right - cornerSize, bottom - cornerSize, cornerSize, cornerSize, 0, 90);
-				path.AddArc(left, bottom - cornerSize, cornerSize, cornerSize, 90, 90);
-				path.CloseFigure();
-
-				if ((node.state & (RenderState.Dragging | RenderState.Focus)) != 0)
-				{
-					graphics.FillPath(Brushes.DarkOrange, path);
-				} else
-				if ((node.state & RenderState.Hover) != 0)
-				{
-					graphics.FillPath(Brushes.LightSteelBlue, path);
-				} else
-				{
-					graphics.FillPath(Brushes.LightGray, path);
-				}
-				graphics.DrawPath(BorderPen, path);
-			}
-			/*
-			if (!node.Collapsed)
-				graphics.DrawLine(Pens.Black, 
-					left  + GraphConstants.ConnectorSize, node.titleItem.bounds.Bottom - GraphConstants.ItemSpacing, 
-					right - GraphConstants.ConnectorSize, node.titleItem.bounds.Bottom - GraphConstants.ItemSpacing);
-			*/
-			var itemPosition = position;
-			itemPosition.X += connectorSize + (int)GraphConstants.HorizontalSpacing;
-			if (node.Collapsed)
-			{
-				bool inputConnected = false;
-				var inputState	= RenderState.None;
-				var outputState = node.outputState;
-				foreach (var connection in node.connections)
-				{
-					if (connection.To.Node == node)
-					{
-						inputState |= connection.state;
-						inputConnected = true;
-					}
-					if (connection.From.Node == node)
-						outputState |= connection.state | RenderState.Connected;
-				}
-
-				RenderItem(graphics, new SizeF(node.bounds.Width - GraphConstants.NodeExtraWidth, 0), node.titleItem, itemPosition);
-				if (node.inputConnectors.Count > 0)
-					RenderConnector(graphics, node.inputBounds, node.inputState);
-				if (node.outputConnectors.Count > 0)
-					RenderConnector(graphics, node.outputBounds, outputState);
-				if (inputConnected)
-					RenderArrow(graphics, node.inputBounds, inputState);
-			} else
-			{
-				node.inputBounds	= Rectangle.Empty;
-				node.outputBounds	= Rectangle.Empty;
-				
-				var minimumItemSize = new SizeF(node.bounds.Width - GraphConstants.NodeExtraWidth, 0);
-				foreach (var item in EnumerateNodeItems(node))
-				{
-					RenderItem(graphics, minimumItemSize, item, itemPosition);
-					var inputConnector	= item.Input;
-					if (inputConnector != null && inputConnector.Enabled)
-					{
-						if (!inputConnector.bounds.IsEmpty)
-						{
-							var state		= RenderState.None;
-							var connected	= false;
-							foreach (var connection in node.connections)
-							{
-								if (connection.To == inputConnector)
-								{
-									state |= connection.state;
-									connected = true;
-								}
-							}
-
-							RenderConnector(graphics, 
-											inputConnector.bounds,
-											inputConnector.state);
-
-							if (connected)
-								RenderArrow(graphics, inputConnector.bounds, state);
-						}
-					}
-					var outputConnector = item.Output;
-					if (outputConnector != null && outputConnector.Enabled)
-					{
-						if (!outputConnector.bounds.IsEmpty)
-						{
-							var state = outputConnector.state;
-							foreach (var connection in node.connections)
-							{
-								if (connection.From == outputConnector)
-									state |= connection.state | RenderState.Connected;
-							}
-							RenderConnector(graphics, outputConnector.bounds, state);
-						}
-					}
-					itemPosition.Y += item.bounds.Height + GraphConstants.ItemSpacing;
-				}
-			}
+            node.Render(graphics);
 		}
 
 		public static void RenderConnections(Graphics graphics, Node node, HashSet<NodeConnection> skipConnections, bool showLabels)

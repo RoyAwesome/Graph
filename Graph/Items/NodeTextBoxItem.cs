@@ -42,14 +42,14 @@ namespace Graph.Items
 	{
 		public event EventHandler<AcceptNodeTextChangedEventArgs> TextChanged;
 
-		public NodeTextBoxItem(string text, bool inputEnabled, bool outputEnabled) :
-			base(inputEnabled, outputEnabled)
+		public NodeTextBoxItem(string text, NodeItemType type) :
+			base(type)
 		{
 			this.Text = text;
 		}
 
 		public NodeTextBoxItem(string text) :
-			this(text, false, false)
+			this(text, NodeItemType.Input)
 		{
 			this.Text = text;
 		}
@@ -140,5 +140,10 @@ namespace Graph.Items
 				graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.LeftTextStringFormat);
 			}
 		}
-	}
+
+        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
+        {
+           
+        }
+    }
 }

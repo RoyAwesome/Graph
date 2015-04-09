@@ -47,6 +47,7 @@
     <Compile Include="Compatibility\ICompatibilityStrategy.cs" />
     <Compile Include="Compatibility\TagTypeCompatibility.cs" />
     <Compile Include="Items\NodeNumericSliderItem.cs" />
+    <Compile Include="NodeRender.cs" />
     <Compile Include="NodeSelection.cs" />
     <Compile Include="Items\NodeDropDownItem.cs" />
     <Compile Include="SelectionForm.cs">

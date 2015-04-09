@@ -28,54 +28,72 @@ using System.Drawing;
 
 namespace Graph
 {
-	public sealed class NodeItemEventArgs : EventArgs
-	{
-		public NodeItemEventArgs(NodeItem item) { Item = item; }
-		public NodeItem Item { get; private set; }
-	}
+    public enum NodeItemType
+    {
+        Input,
+        Output,
+        Label,
+    }
 
-	public abstract class NodeItem : IElement
-	{
-		public NodeItem()
-		{
-			this.Input		= new NodeInputConnector(this, false);
-			this.Output		= new NodeOutputConnector(this, false);
-		}
+    public sealed class NodeItemEventArgs : EventArgs
+    {
+        public NodeItemEventArgs(NodeItem item) { Item = item; }
+        public NodeItem Item { get; private set; }
+    }
 
-		public NodeItem(bool enableInput, bool enableOutput)
-		{
-			this.Input		= new NodeInputConnector(this, enableInput);
-			this.Output		= new NodeOutputConnector(this, enableOutput);
-		}
+    public abstract class NodeItem : IElement
+    {
+        public NodeItemType ItemType
+        {
+            get
+            {
+                if (Input == null && Output == null) return NodeItemType.Label;
+                if (Input != null) return NodeItemType.Input;
+                return NodeItemType.Output;
+            }
+        }
 
-		public Node					Node			{ get; internal set; }
-		public object				Tag				{ get; set; }
+        public NodeItem()
+        {
 
-		public NodeConnector		Input			{ get; private set; }
-		public NodeConnector		Output			{ get; private set; }
+        }
 
-        internal RectangleF			bounds;
-        internal RenderState		state			= RenderState.None;
+        public NodeItem(NodeItemType Type)
+        {
+            if (Type == NodeItemType.Input) this.Input = new NodeInputConnector(this, true);
+            if (Type == NodeItemType.Output) this.Output = new NodeOutputConnector(this, true);
+        }
+
+        public Node Node { get; internal set; }
+        public object Tag { get; set; }
+
+        public NodeConnector Input { get; private set; }
+        public NodeConnector Output { get; private set; }
+
+        internal RectangleF bounds;
+        internal RenderState state = RenderState.None;
 
         public event EventHandler<NodeItemEventArgs> Clicked;
 
-        public virtual bool			OnClick()
+        public virtual bool OnClick()
         {
             if (Clicked != null)
             {
                 Clicked(this, new NodeItemEventArgs(this));
                 return true;
             }
-            return false;              
-          
-        }
-		public virtual bool			OnDoubleClick()				 { return false; }
-		public virtual bool			OnStartDrag(PointF location, out PointF original_location) { original_location = Point.Empty; return false; }
-		public virtual bool			OnDrag(PointF location)		 { return false; }		
-		public virtual bool			OnEndDrag() 				 { return false; }
-		public abstract SizeF		Measure(Graphics context);
-        public abstract void		Render(Graphics graphics, SizeF minimumSize, PointF position);
+            return false;
 
-		public ElementType ElementType { get { return ElementType.NodeItem; } }
-	}
+        }
+        public virtual bool OnDoubleClick() { return false; }
+        public virtual bool OnStartDrag(PointF location, out PointF original_location) { original_location = Point.Empty; return false; }
+        public virtual bool OnDrag(PointF location) { return false; }
+        public virtual bool OnEndDrag() { return false; }
+        public abstract SizeF Measure(Graphics context);
+        public abstract void Render(Graphics graphics, SizeF minimumSize, PointF position);
+
+        public abstract void RenderPin(Graphics graphics, SizeF boundingBox, PointF position);
+
+        public ElementType ElementType { get { return ElementType.NodeItem; } }
+    }
 }

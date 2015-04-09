@@ -33,8 +33,8 @@ namespace Graph.Items
 	public sealed class NodeColorItem : NodeItem
 	{
 	
-		public NodeColorItem(string text, Color color, bool inputEnabled, bool outputEnabled) :
-			base(inputEnabled, outputEnabled)
+		public NodeColorItem(string text, Color color, NodeItemType type) :
+			base(type)
 		{
 			this.Text = text;
 			this.Color = color;
@@ -150,5 +150,10 @@ namespace Graph.Items
 			//}
 			//graphics.DrawRectangle(Pens.Black, colorBox.X, colorBox.Y, colorBox.Width, colorBox.Height);
 		}
-	}
+
+        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

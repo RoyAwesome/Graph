@@ -34,8 +34,8 @@ namespace Graph.Items
 	{		
 		public event EventHandler<NodeItemEventArgs> ValueChanged;
 
-		public NodeSliderItem(string text, float sliderSize, float textSize, float minValue, float maxValue, float defaultValue, bool inputEnabled, bool outputEnabled) :
-			base(inputEnabled, outputEnabled)
+		public NodeSliderItem(string text, float sliderSize, float textSize, float minValue, float maxValue, float defaultValue, NodeItemType type) :
+			base(type)
 		{
 			this.Text = text;
 			this.MinimumSliderSize = sliderSize;
@@ -183,5 +183,10 @@ namespace Graph.Items
 			else
 				graphics.DrawRectangle(Pens.Black, sliderBox.X, sliderBox.Y, sliderBox.Width, sliderBox.Height);
 		}
-	}
+
+        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

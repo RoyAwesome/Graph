@@ -32,8 +32,8 @@ namespace Graph.Items
 {
 	public sealed class NodeCheckboxItem : NodeItem
 	{
-		public NodeCheckboxItem(string text, bool inputEnabled, bool outputEnabled) :
-			base(inputEnabled, outputEnabled)
+		public NodeCheckboxItem(string text, NodeItemType itemType) :
+			base(itemType)
 		{
 			this.Text = text;
 		}
@@ -130,5 +130,10 @@ namespace Graph.Items
 					graphics.DrawPath(Pens.Black, path);
 			}
 		}
-	}
+
+        public override void RenderPin(Graphics graphics, SizeF boundingBox, PointF position)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
