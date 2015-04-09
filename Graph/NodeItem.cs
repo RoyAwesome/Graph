@@ -197,8 +197,6 @@ namespace Graph
         }
         #endregion
 
-
-
         public ElementType ElementType { get { return ElementType.NodeItem; } }
     }
 }

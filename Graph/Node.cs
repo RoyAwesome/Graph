@@ -89,7 +89,7 @@ namespace Graph
         public PointF Location { get; set; }
         public object Tag { get; set; }
 
-        public IEnumerable<NodeConnection> Connections { get { return connections; } }
+        public IEnumerable<NodeConnection> Connections { get { return AllConnections; } }
         public IEnumerable<NodeItem> Items { get { return InputItems.Union(OutputItems); } }
 
         public RectangleF Bounds
@@ -104,9 +104,25 @@ namespace Graph
         internal RenderState inputState = RenderState.None;
         internal RenderState outputState = RenderState.None;
 
-        internal readonly List<NodeConnector> inputConnectors = new List<NodeConnector>();
-        internal readonly List<NodeConnector> outputConnectors = new List<NodeConnector>();
-        internal readonly List<NodeConnection> connections = new List<NodeConnection>();
+        public IEnumerable<NodeConnector> InputConnectors
+        {
+            get
+            {
+                return InputItems.Select(x => x.Input);
+            }
+        }
+        public IEnumerable<NodeConnector> OutputConnectors
+        {
+            get
+            {
+                return OutputItems.Select(x => x.Output);
+            }
+        }
+        internal List<NodeConnection> AllConnections
+        {
+            get;
+            set;
+        }
 
         public RectangleF HeaderBounds
         {
@@ -134,6 +150,7 @@ namespace Graph
 
             InputItems = new List<NodeItem>();
             OutputItems = new List<NodeItem>();
+            AllConnections = new List<NodeConnection>();
         }
 
         public void AddItem(NodeItem item)

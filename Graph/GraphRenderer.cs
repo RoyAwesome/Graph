@@ -82,7 +82,7 @@ namespace Graph
 
 		public static void RenderConnections(Graphics graphics, Node node, HashSet<NodeConnection> skipConnections, bool showLabels)
 		{
-			foreach (var connection in node.connections.Reverse<NodeConnection>())
+			foreach (var connection in node.AllConnections.Reverse<NodeConnection>())
 			{
 				if (connection == null ||
 					connection.From == null ||
@@ -96,9 +96,9 @@ namespace Graph
 					RectangleF toBounds;
 					RectangleF fromBounds;
 					if (to.Node.Collapsed)		toBounds = to.Node.inputBounds;
-					else						toBounds = to.bounds;
+					else						toBounds = to.Bounds;
 					if (from.Node.Collapsed)	fromBounds = from.Node.outputBounds;
-					else						fromBounds = from.bounds;
+					else						fromBounds = from.Bounds;
 
 					var x1 = (fromBounds.Left + fromBounds.Right) / 2.0f;
 					var y1 = (fromBounds.Top + fromBounds.Bottom) / 2.0f;
@@ -184,9 +184,9 @@ namespace Graph
 			RectangleF toBounds;
 			RectangleF fromBounds;
 			if (to.Node.Collapsed)		toBounds = to.Node.inputBounds;
-			else						toBounds = to.bounds;
+			else						toBounds = to.Bounds;
 			if (from.Node.Collapsed)	fromBounds = from.Node.outputBounds;
-			else						fromBounds = from.bounds;
+			else						fromBounds = from.Bounds;
 
 			var x1 = (fromBounds.Left + fromBounds.Right) / 2.0f;
 			var y1 = (fromBounds.Top + fromBounds.Bottom) / 2.0f;
@@ -380,7 +380,7 @@ namespace Graph
 			
 			RectangleF outputBounds;
 			if (output.Node.Collapsed)	outputBounds = output.Node.outputBounds;
-			else						outputBounds = output.bounds;
+			else						outputBounds = output.Bounds;
 
 			var x1 = (outputBounds.Left + outputBounds.Right) / 2.0f;
 			var y1 = (outputBounds.Top + outputBounds.Bottom) / 2.0f;
@@ -404,7 +404,7 @@ namespace Graph
 			
 			RectangleF inputBounds;
 			if (input.Node.Collapsed)	inputBounds = input.Node.inputBounds;
-			else						inputBounds = input.bounds;
+			else						inputBounds = input.Bounds;
 
 			var x2 = (inputBounds.Left + inputBounds.Right) / 2.0f;
 			var y2 = (inputBounds.Top + inputBounds.Bottom) / 2.0f;

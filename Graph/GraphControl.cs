@@ -305,14 +305,14 @@ namespace Graph
 					BringElementToFront(connection.From);
 					BringElementToFront(connection.To);
 					
-					var connections = connection.From.Node.connections;
+					var connections = connection.From.Node.AllConnections;
 					if (connections[0] != connection)
 					{
 						connections.Remove(connection);
 						connections.Insert(0, connection);
 					}
 					
-					connections = connection.To.Node.connections;
+					connections = connection.To.Node.AllConnections;
 					if (connections[0] != connection)
 					{
 						connections.Remove(connection);
@@ -639,14 +639,14 @@ namespace Graph
 				!to.Enabled)
 				return null;
 
-			foreach (var other in from.Node.connections)
+			foreach (var other in from.Node.AllConnections)
 			{
 				if (other.From == from &&
 					other.To == to)
 					return null;
 			}
 
-			foreach (var other in to.Node.connections)
+			foreach (var other in to.Node.AllConnections)
 			{
 				if (other.From == from &&
 					other.To == to)
@@ -657,8 +657,9 @@ namespace Graph
 			connection.From = from;
 			connection.To = to;
 
-			from.Node.connections.Add(connection);
-			to.Node.connections.Add(connection);
+            
+			from.Node.AllConnections.Add(connection);
+			to.Node.AllConnections.Add(connection);
 			
 			if (ConnectionAdded != null)
 			{
@@ -696,11 +697,11 @@ namespace Graph
 			var to		= connection.To;
 			if (from != null && from.Node != null)
 			{
-				from.Node.connections.Remove(connection);
+				from.Node.AllConnections.Remove(connection);
 			}
 			if (to != null && to.Node != null)
 			{
-				to.Node.connections.Remove(connection);
+				to.Node.AllConnections.Remove(connection);
 			}
 
 			// Just in case somebody stored it somewhere ..
@@ -719,7 +720,7 @@ namespace Graph
 		bool DisconnectAll(Node node)
 		{
 			bool modified = false;
-			var connections = node.connections.ToList();
+			var connections = node.AllConnections.ToList();
 			foreach (var connection in connections)
 				modified = Disconnect(connection) ||
 					modified;
@@ -756,12 +757,12 @@ namespace Graph
 			if (node.Collapsed)
 				return null;
 
-			foreach (var inputConnector in node.inputConnectors)
+			foreach (var inputConnector in node.InputConnectors)
 			{
-				if (inputConnector.bounds.IsEmpty)
+				if (inputConnector.Bounds.IsEmpty)
 					continue;
 
-				if (inputConnector.bounds.Contains(location))
+				if (inputConnector.Bounds.Contains(location))
 					return inputConnector;
 			}
 			return null;
@@ -774,12 +775,12 @@ namespace Graph
 			if (node.Collapsed)
 				return null;
 
-			foreach (var outputConnector in node.outputConnectors)
+			foreach (var outputConnector in node.OutputConnectors)
 			{
-				if (outputConnector.bounds.IsEmpty)
+				if (outputConnector.Bounds.IsEmpty)
 					continue;
 
-				if (outputConnector.bounds.Contains(location))
+				if (outputConnector.Bounds.Contains(location))
 					return outputConnector;
 			}
 			return null;
@@ -812,7 +813,7 @@ namespace Graph
 			var foundConnections	= new List<NodeConnection>();
 			foreach (var node in graphNodes)
 			{
-				foreach (var connection in node.connections)
+				foreach (var connection in node.AllConnections)
 				{
 					if (skipConnections.Add(connection)) // if we can add it, we haven't checked it yet
 					{
@@ -868,7 +869,7 @@ namespace Graph
 			var foundConnections	= new List<NodeConnection>();
 			foreach (var node in graphNodes)
 			{
-				foreach (var connection in node.connections)
+				foreach (var connection in node.AllConnections)
 				{
 					if (skipConnections.Add(connection)) // if we can add it, we haven't checked it yet
 					{
@@ -1195,7 +1196,7 @@ namespace Graph
 								foreach (Node graphNode in graphNodes)
 								{
 									// Check compatibility of node connectors
-									foreach (NodeConnector connectorTo in graphNode.outputConnectors)
+									foreach (NodeConnector connectorTo in graphNode.OutputConnectors)
 									{
 										if (CompatibilityStrategy.CanConnect(connectorFrom, connectorTo))
 										{
@@ -1210,7 +1211,7 @@ namespace Graph
 								foreach (Node graphNode in graphNodes)
 								{
 									// Check compatibility of node connectors
-									foreach (NodeConnector connectorTo in graphNode.inputConnectors)
+									foreach (NodeConnector connectorTo in graphNode.InputConnectors)
 									{
 										if (CompatibilityStrategy.CanConnect(connectorFrom, connectorTo))
 										{
@@ -1489,12 +1490,12 @@ namespace Graph
 								if (dragConnector == null)
 									break;
 								
-								if (node.outputConnectors.Count == 1)
+								if (node.OutputConnectors.Count() == 1)
 								{
 									// Check if this connection would be allowed.
-									if (ConnectionIsAllowed(dragConnector, node.outputConnectors[0]))
+									if (ConnectionIsAllowed(dragConnector, node.OutputConnectors.First()))
 									{
-										element = node.outputConnectors[0];
+										element = node.OutputConnectors.First();
 										goto case ElementType.OutputConnector;
 									}
 								}
@@ -1507,12 +1508,12 @@ namespace Graph
 								if (dragConnector == null)
 									break;
 
-								if (node.inputConnectors.Count == 1)
+								if (node.InputConnectors.Count() == 1)
 								{
 									// Check if this connection would be allowed.
-									if (ConnectionIsAllowed(dragConnector, node.inputConnectors[0]))
+									if (ConnectionIsAllowed(dragConnector, node.InputConnectors.First()))
 									{
-										element = node.inputConnectors[0];
+										element = node.InputConnectors.First();
 										goto case ElementType.InputConnector;
 									}
 								}
@@ -1591,11 +1592,11 @@ namespace Graph
 
 			if (destinationConnector != null)
 			{
-				if (!destinationConnector.bounds.IsEmpty)
+				if (!destinationConnector.Bounds.IsEmpty)
 				{
 					var pre_points = new PointF[] { 
-						new PointF((destinationConnector.bounds.Left + destinationConnector.bounds.Right) / 2,
-									(destinationConnector.bounds.Top  + destinationConnector.bounds.Bottom) / 2) };
+						new PointF((destinationConnector.Bounds.Left + destinationConnector.Bounds.Right) / 2,
+									(destinationConnector.Bounds.Top  + destinationConnector.Bounds.Bottom) / 2) };
 					transformation.TransformPoints(pre_points);
 					snappedLocation = pre_points[0];
 				}
@@ -1774,10 +1775,10 @@ namespace Graph
 					// Remove all highlight flags
 					foreach (Node graphNode in graphNodes)
 					{
-						foreach (NodeConnector inputConnector in graphNode.inputConnectors)
+						foreach (NodeConnector inputConnector in graphNode.InputConnectors)
 							SetFlag(inputConnector, RenderState.Compatible | RenderState.Incompatible, false);
 
-						foreach (NodeConnector outputConnector in graphNode.outputConnectors)
+						foreach (NodeConnector outputConnector in graphNode.OutputConnectors)
 							SetFlag(outputConnector, RenderState.Compatible | RenderState.Incompatible, false);
 					}
 				}

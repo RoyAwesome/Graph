@@ -95,11 +95,6 @@ namespace Graph
             itemsBounds = new RectangleF(position.X, position.Y + HeaderBounds.Height + GraphConstants.HeaderBottomSpacing, 
                 nodeSize.Width, nodeSize.Height - HeaderSize.Height - GraphConstants.HeaderBottomSpacing);
 
-
-            inputConnectors.Clear();
-            outputConnectors.Clear();
-            //node.connections.Clear();
-
             var itemPosition = position;
             itemPosition.X += GraphConstants.ConnectorSize + (int)GraphConstants.HorizontalSpacing;
 
