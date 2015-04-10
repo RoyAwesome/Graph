@@ -917,10 +917,30 @@ namespace Graph
 			var width = Math.Max(x1, x2) - x;
 			var height = Math.Max(y1, y2) - y;
 			return new RectangleF(x,y,width,height);
-		}				
-		#endregion
+		}
+        #endregion
 
-		#region OnPaint
+        #region OnPaint
+
+        private Graphics graphics;
+        public Graphics GetLayoutGraphics()
+        {
+            if(graphics == null) graphics = CreateGraphics();
+
+            graphics.PageUnit = GraphicsUnit.Pixel;
+            graphics.CompositingQuality = CompositingQuality.GammaCorrected;
+            graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+            graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+            UpdateMatrices();
+            graphics.Transform = transformation;
+            graphics.SmoothingMode = SmoothingMode.HighQuality;
+
+            return graphics;
+
+        }
+
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
