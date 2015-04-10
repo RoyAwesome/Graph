@@ -10,3 +10,4 @@
 *.vshost.exe.manifest
 *.csproj.user
 Graph.sln.ide/
+bin/
