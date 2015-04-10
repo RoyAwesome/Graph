@@ -1339,7 +1339,7 @@ namespace Graph
 						{
 							foreach (var node in graphNodes)
 							{
-								if (marque_rectangle.Contains(node.Bounds))
+								if (marque_rectangle.IntersectsWith(node.Bounds))
 								{
 									if ((node.state & RenderState.Focus) == 0 &&
 										(ModifierKeys != Keys.Alt))
