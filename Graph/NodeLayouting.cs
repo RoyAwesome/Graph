@@ -18,15 +18,17 @@ namespace Graph
             size.Height += GraphConstants.HeaderTopSpacing;
             size.Height += HeaderSize.Height;
             size.Height += GraphConstants.HeaderBottomSpacing;
-           
-            
+
+            //size.Width += GraphConstants.HeaderTextSpacing * 2;
+            size.Width += graphics.MeasureString(Title, SystemFonts.CaptionFont).Width;
+
 
             SizeF InputColumnSize = new SizeF();
             //Measure the Input Items
             foreach(var item in InputItems)
             {
                 var itemSize = item.MeasureItem(graphics); 
-                InputColumnSize.Width = Math.Max(size.Width, itemSize.Width);
+                InputColumnSize.Width = Math.Max(InputColumnSize.Width, itemSize.Width);
                 InputColumnSize.Height += GraphConstants.ItemSpacing + itemSize.Height;
             }
 
@@ -35,7 +37,7 @@ namespace Graph
             foreach (var item in OutputItems)
             {
                 var itemSize = item.MeasureItem(graphics);
-                OutputColumnSize.Width = Math.Max(size.Width, itemSize.Width);
+                OutputColumnSize.Width = Math.Max(OutputColumnSize.Width, itemSize.Width);
                 OutputColumnSize.Height += GraphConstants.ItemSpacing + itemSize.Height;
             }
 
@@ -72,10 +74,12 @@ namespace Graph
             }
 
             itemPosition = ItemPosition;
-            itemPosition.X += RightWidth + GraphConstants.HorizontalColumnSpacing;
+            
 
             foreach (var item in OutputItems)
             {
+                itemPosition.X = Bounds.Right - (GraphConstants.ConnectorSize + (int)GraphConstants.HorizontalSpacing + item.ItemBounds.Width);
+
                 item.PerformLayout(graphics, itemPosition);
                 itemPosition.Y += item.ItemBounds.Height + GraphConstants.ItemSpacing;
 

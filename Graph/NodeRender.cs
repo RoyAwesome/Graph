@@ -16,9 +16,9 @@ namespace Graph
 
         protected Brush HeaderTextColor = Brushes.White;
 
-
-        protected Pen SelectedBorder = new Pen(Color.White, 5);
-        protected Pen HoverBorder = new Pen(Color.White, 2);
+        protected Pen DraggingBorder = new Pen(Color.White, 5);
+        protected Pen SelectedBorder = new Pen(Color.White, 2);
+        protected Pen HoverBorder = new Pen(Color.LightGray, 2);
         protected Pen IdleBorder = new Pen(Color.Black, 2);
 
         public Brush TextColor = Brushes.White;
@@ -51,10 +51,13 @@ namespace Graph
 
                 if ((state & (RenderState.Dragging)) != 0)
                 {
+                    graphics.DrawPath(DraggingBorder, path);
+                }
+                else if ((state & RenderState.Focus) != 0)
+                {
                     graphics.DrawPath(SelectedBorder, path);
                 }
-                else
-                if ((state & RenderState.Hover) != 0)
+                else if ((state & RenderState.Hover) != 0)
                 {
                     graphics.DrawPath(HoverBorder, path);
                 }
@@ -64,6 +67,8 @@ namespace Graph
                 }
                
             }
+
+            if(GraphConstants.DebugRender) graphics.DrawRectangle(Pens.Turquoise, Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height);
 
         }
 

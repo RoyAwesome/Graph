@@ -48,6 +48,9 @@ namespace Graph
         public const int HeaderTopSpacing = 5;
         public const int HeaderHeight = 18;
         public const int HeaderBottomSpacing = ItemSpacing * 3; // Number of pixels between the Header box and the rest of the elements
+        public const int HeaderTextSpacing = 5;
+
+        public static bool DebugRender = false;
 
         public const TextFormatFlags TitleTextFlags	=	TextFormatFlags.ExternalLeading |
 															TextFormatFlags.GlyphOverhangPadding |

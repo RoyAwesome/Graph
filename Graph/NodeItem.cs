@@ -20,6 +20,8 @@
 // THE SOFTWARE.
 #endregion
 
+//#define DEBUGRENDER
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,8 +67,8 @@ namespace Graph
         public object Tag { get; set; }
 
         public NodeConnector Connector { get; private set; }
-        
-               
+
+
         public RectangleF ContentBounds
         {
             get;
@@ -148,6 +150,13 @@ namespace Graph
             RenderContent(graphics);
 
             RenderPin(graphics);
+
+            if (GraphConstants.DebugRender)
+            {
+                graphics.DrawRectangle(Pens.Magenta, ContentBounds.X, ContentBounds.Y, ContentBounds.Width, ContentBounds.Height);
+                graphics.DrawRectangle(Pens.LimeGreen, ItemBounds.X, ItemBounds.Y, ItemBounds.Width, ItemBounds.Height);
+                graphics.DrawRectangle(Pens.Red, PinBounds.X, PinBounds.Y, PinBounds.Width, PinBounds.Height);
+            }
         }
         #endregion
 
@@ -156,7 +165,7 @@ namespace Graph
         public abstract SizeF MeasureContent(Graphics context);
         protected virtual SizeF MeasurePin(Graphics context)
         {
-            return new SizeF(GraphConstants.ConnectorSize, GraphConstants.ConnectorSize);
+            return new SizeF(GraphConstants.MinimumItemHeight, GraphConstants.MinimumItemHeight);
         }
         public virtual SizeF MeasureItem(Graphics context)
         {
@@ -173,10 +182,10 @@ namespace Graph
         public virtual void PerformLayout(Graphics context, PointF position)
         {
             var contentSize = MeasureContent(context);
-            var pinSize = MeasurePin(context);                       
+            var pinSize = MeasurePin(context);
 
             ItemBounds = new RectangleF(position, MeasureItem(context));
-        
+
             if (ItemType == NodeItemType.Input)
             {
                 PinBounds = new RectangleF(position, pinSize);
@@ -184,7 +193,7 @@ namespace Graph
                 position.X += pinSize.Width + GraphConstants.PinSpacing;
                 ContentBounds = new RectangleF(position, contentSize);
             }
-            else if(ItemType == NodeItemType.Output)
+            else if (ItemType == NodeItemType.Output)
             {
                 ContentBounds = new RectangleF(position, contentSize);
                 position.X += contentSize.Width + GraphConstants.PinSpacing;
