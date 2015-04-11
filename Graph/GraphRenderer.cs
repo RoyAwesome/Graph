@@ -109,7 +109,7 @@ namespace Graph
 					float centerY;
 					using (var path = GetArrowLinePath(x1, y1, x2, y2, out centerX, out centerY, false))
 					{
-						using (var brush = new SolidBrush(GetArrowLineColor(connection.state | RenderState.Connected)))
+                        using (var brush = new SolidBrush(from.Item.MainColor))
 						{
 							graphics.FillPath(brush, path);
 						}
