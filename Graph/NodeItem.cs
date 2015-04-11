@@ -68,6 +68,13 @@ namespace Graph
 
         public NodeConnector Connector { get; private set; }
 
+        public virtual Color MainColor
+        {
+            get
+            {
+                return Color.Black;
+            }
+        }
 
         public RectangleF ContentBounds
         {
