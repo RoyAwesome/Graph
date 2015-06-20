@@ -165,6 +165,22 @@ namespace Graph
                 graphics.DrawRectangle(Pens.Red, PinBounds.X, PinBounds.Y, PinBounds.Width, PinBounds.Height);
             }
         }
+
+        protected void RenderAsLabel(Graphics graphics, string Text)
+        {
+            if (ItemType == NodeItemType.Input)
+            {
+                graphics.DrawString(Text, SystemFonts.MenuFont, Node.TextColor, ContentBounds, GraphConstants.LeftTextStringFormat);
+            }
+            else if (ItemType == NodeItemType.Output)
+            {
+                graphics.DrawString(Text, SystemFonts.MenuFont, Node.TextColor, ContentBounds, GraphConstants.RightTextStringFormat);
+            }
+            else
+            {
+                graphics.DrawString(Text, SystemFonts.MenuFont, Node.TextColor, ContentBounds, GraphConstants.CenterTextStringFormat);
+            }
+        }
         #endregion
 
 
@@ -206,6 +222,36 @@ namespace Graph
                 position.X += contentSize.Width + GraphConstants.PinSpacing;
 
                 PinBounds = new RectangleF(position, pinSize);
+            }
+        }
+
+        protected SizeF MeasureAsLabel(Graphics graphics, string Text)
+        {
+            SizeF TextSize = new Size(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight); ;
+            if (!string.IsNullOrWhiteSpace(Text))
+            {               
+               
+                if (ItemType == NodeItemType.Input)
+                {
+                    TextSize = graphics.MeasureString(Text, SystemFonts.MenuFont, TextSize, GraphConstants.LeftMeasureTextStringFormat);
+                }
+                else if (ItemType == NodeItemType.Output)
+                {
+                    TextSize = graphics.MeasureString(Text, SystemFonts.MenuFont, TextSize, GraphConstants.RightMeasureTextStringFormat);
+                }
+                else
+                {
+                    TextSize = graphics.MeasureString(Text, SystemFonts.MenuFont, TextSize, GraphConstants.CenterMeasureTextStringFormat);
+                }
+
+                TextSize.Width = Math.Max(GraphConstants.MinimumItemWidth, TextSize.Width);
+                TextSize.Height = Math.Max(GraphConstants.MinimumItemHeight, TextSize.Height);
+
+                return TextSize;
+            }
+            else
+            {
+                return new SizeF(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
             }
         }
         #endregion

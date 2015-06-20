@@ -38,7 +38,7 @@ namespace Graph.Items
 		public string			Text			{ get; set; }
 	}
 
-	public sealed class NodeTextBoxItem : NodeItem
+	public class NodeTextBoxItem : NodeItem
 	{
 		public event EventHandler<AcceptNodeTextChangedEventArgs> TextChanged;
 

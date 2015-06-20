@@ -38,7 +38,7 @@ namespace Graph.Items
 		public int			Index			{ get; set; }
 	}
 
-	public sealed class NodeDropDownItem : NodeItem
+	public class NodeDropDownItem : NodeItem
 	{
 		public event EventHandler<AcceptNodeSelectionChangedEventArgs> SelectionChanged;
 

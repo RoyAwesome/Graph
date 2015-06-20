@@ -30,7 +30,7 @@ using System.Drawing.Drawing2D;
 
 namespace Graph.Items
 {
-	public sealed class NodeCheckboxItem : NodeItem
+	public class NodeCheckboxItem : NodeItem
 	{
 		public NodeCheckboxItem(string text, NodeItemType itemType) :
 			base(itemType)

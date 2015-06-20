@@ -30,7 +30,7 @@ using System.Drawing.Drawing2D;
 
 namespace Graph.Items
 {
-    public sealed class NodeColorItem : NodeItem
+    public class NodeColorItem : NodeItem
     {
 
         public NodeColorItem(string text, Color color, NodeItemType type) :

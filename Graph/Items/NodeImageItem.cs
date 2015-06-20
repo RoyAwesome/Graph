@@ -29,7 +29,7 @@ using System.Drawing;
 
 namespace Graph.Items
 {
-	public sealed class NodeImageItem : NodeItem
+	public class NodeImageItem : NodeItem
 	{
 		
 

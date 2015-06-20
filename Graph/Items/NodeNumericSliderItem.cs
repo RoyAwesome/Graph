@@ -28,7 +28,7 @@ namespace Graph.Items
     /// <summary>
     /// An item that contains a slider which displays its value as a text on the slider itself
     /// </summary>
-    public sealed class NodeNumericSliderItem : NodeSliderItem
+    public class NodeNumericSliderItem : NodeSliderItem
     {
         /// <summary>
         /// Construct a new NodeNumericSliderItem.
